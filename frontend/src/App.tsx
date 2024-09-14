@@ -1,4 +1,6 @@
 import styles from "./styles/App.module.css";
+import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
 
 function App() {
   return (
@@ -8,6 +10,8 @@ function App() {
         <div className="mt-5 p-3 px-6 pt-2  text-black border-4 border-black rounded-full text-center">
           Press space to record audio
         </div>
+        <LoginButton />
+        <LogoutButton />
       </div>
     </>
   );
