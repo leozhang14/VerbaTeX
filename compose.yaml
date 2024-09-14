@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3001:3001
+    environment:
+      - AWS_ACCESS_KEY
+      - AWS_SECRET_KEY
   frontend:
     build:
       context: frontend
