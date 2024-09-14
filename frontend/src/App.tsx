@@ -14,6 +14,8 @@ function App() {
 
   return (
     <>
+    <LoginButton/>
+    <LogoutButton/>
       <div className={styles.container}>
         <h1 className="mt-5 text-green-500 text-2xl">VerbaTeX</h1>
 
