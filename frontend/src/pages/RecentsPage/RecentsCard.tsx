@@ -26,7 +26,7 @@ const RecentsCard = ({ text, liked, index }: RecentsCardsProps) => {
 
   return (
     <div
-      className={`flex justify-between p-5 px-7 ${
+      className={`flex justify-between p-5 px-7 items-start ${
         index % 2 === 0 ? "bg-green-50" : "bg-white"
       }`}
     >

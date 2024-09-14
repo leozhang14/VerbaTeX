@@ -69,7 +69,10 @@ const FavouritesCard = ({
             <div className="w-8"></div>
             <div>{favourite}</div>
           </div>
-          <IoCopySharp className="text-xl" onClick={handleCopy}></IoCopySharp>
+          <IoCopySharp
+            className="text-xl min-w-6"
+            onClick={handleCopy}
+          ></IoCopySharp>
         </div>
       )}
     </div>
