@@ -28,7 +28,7 @@ const RecordPage = () => {
   return (
     <div>
       <Navbar title="Record new commands"></Navbar>
-      <div className="container mx-auto p-5 flex flex-col items-center bg-red-50">
+      <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="flex items-center space-x-3">
           <div
             className="bg-green-500 rounded-full w-16 h-16 flex items-center justify-center text-white"
