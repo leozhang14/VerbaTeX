@@ -1,10 +1,9 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
-import { IoMdPlay } from "react-icons/io";
-import { FaStop } from "react-icons/fa";
 import { FaMicrophone } from "react-icons/fa";
 import useSpeechRecognition from "../../hooks/useSpeechRecognitionHook";
 import styles from "../../styles/RecordPage.module.css";
+import { toast } from "react-toastify";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } =
@@ -25,6 +24,10 @@ const RecordPage = () => {
 
   const handleSubmit = () => {
     console.log(text);
+    toast.success("Text has been submitted", {
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
   };
 
   return (

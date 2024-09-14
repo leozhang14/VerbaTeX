@@ -1,5 +1,6 @@
 import { FaRegHeart } from "react-icons/fa";
 import { IoCopyOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 type RecentsCardsProps = {
   recent: string;
@@ -9,7 +10,19 @@ type RecentsCardsProps = {
 const RecentsCard = ({ recent, index }: RecentsCardsProps) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(recent);
+    toast.success("Copied to clipboard", {
+      autoClose: 1000,
+      hideProgressBar: true,
+    });
   };
+
+  const handleLike = () => {
+    toast.success("Liked", {
+      autoClose: 1000,
+      hideProgressBar: true,
+    });
+  };
+
   return (
     <div
       className={`flex justify-between p-5 px-7 ${
@@ -18,7 +31,7 @@ const RecentsCard = ({ recent, index }: RecentsCardsProps) => {
     >
       <div>{recent}</div>
       <div className="flex items-center space-x-4 text-xl">
-        <FaRegHeart />
+        <FaRegHeart onClick={handleLike} />
         <IoCopyOutline onClick={handleCopy} />
       </div>
     </div>
