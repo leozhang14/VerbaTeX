@@ -2,10 +2,9 @@ import os
 import json
 import boto3
 from botocore.exceptions import ClientError
-
-from flask import Flask
-from flask import request
-
+from dotenv import load_dotenv
+from flask import Flask, request, jsonify
+import openai
 
 app = Flask(__name__)
 
@@ -19,7 +18,37 @@ FILE_NAME   = 'file1.json'
 def index():
     return { 'status' : 'ok' }, 200
 
-@app.route("/upload", methods=['POST'])
+@app.route('/gpt-query', methods=['GET'])
+def gpt_query():
+    # Get the query from the URL parameters
+    query = "For all x in the natural numbers, x is greater than zero by the standard domain of natural numbers."
+    # Load environment variables from the .env file
+    load_dotenv()
+
+    # Access the OPENAI_KEY environment variable
+    openai_key = os.getenv("OPENAI_KEY")
+
+    if not query:
+        return jsonify({'error': 'Query parameter is missing'}), 400
+    
+    try:
+        client = openai.OpenAI(api_key=openai_key)
+        completion = client.chat.completions.create(
+            model="ft:gpt-4o-2024-08-06:personal:verbatex:A7UdpZsE",
+            messages=[
+                {"role": "system", "content": "You are a helpful LaTeX translator."},
+                {"role": "user", "content": query}
+            ]
+        )
+
+        response = completion.choices[0].message.content
+        # Return the message
+        return jsonify({'response': response})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/transcribe", methods=['POST'])
 def upload():
     # Check that the post body is valid JSON
     if not request.is_json:
