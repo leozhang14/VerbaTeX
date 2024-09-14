@@ -12,10 +12,16 @@ const Logout = () => {
   };
 
   return (
-    <div>
-      <button onClick={handleLogout}>Log Out</button>
+    <div className="relative flex items-center justify-end p-2">
+        <button 
+            onClick={handleLogout}
+            className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 inline-flex items-center"
+        >
+            Log Out
+        </button>
     </div>
   );
 };
 
 export default Logout;
+
