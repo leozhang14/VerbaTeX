@@ -1,8 +1,9 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
-import { IoMdPlay } from "react-icons/io";
-import { FaStop } from "react-icons/fa";
+import { FaMicrophone } from "react-icons/fa";
 import useSpeechRecognition from "../../hooks/useSpeechRecognitionHook";
+import styles from "../../styles/RecordPage.module.css";
+import { toast } from "react-toastify";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } =
@@ -23,28 +24,27 @@ const RecordPage = () => {
 
   const handleSubmit = () => {
     console.log(text);
+    toast.success("Text has been submitted", {
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
   };
 
   return (
     <div>
-      <Navbar title="Record new commands"></Navbar>
+      <Navbar title="Record new commands" location="record"></Navbar>
       <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="flex items-center space-x-3">
           <div
-            className="bg-green-500 rounded-full w-16 h-16 flex items-center justify-center text-white"
+            className={`${styles.mic} ${
+              isListening ? styles.listening : ""
+            } bg-green-500 rounded-full w-24 h-24 flex items-center justify-center text-white`}
             onClick={handleOnClick}
           >
-            {isListening ? (
-              <FaStop className="text-3xl"></FaStop>
-            ) : (
-              <IoMdPlay className="text-5xl pl-2 " />
-            )}
-          </div>
-          <div className="bg-green-500 h-12 w-72 rounded-md flex items-center pl-2">
-            PLACEHOLDER
+            <FaMicrophone className="text-3xl"></FaMicrophone>
           </div>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-2">
           <textarea
             rows={5}
             cols={80}
@@ -54,10 +54,14 @@ const RecordPage = () => {
             onChange={handleOnChange}
           ></textarea>
           <div
-            className="ml-auto p-2 px-4 border-2 border-black rounded-lg mt-2 hover:bg-black hover:text-white"
-            onClick={handleSubmit}
+            className={`ml-auto p-2 px-4 border-2 rounded-lg mt-2 ${
+              isListening
+                ? "border-green-500 bg-green-100 text-green-700 cursor-not-allowed"
+                : "border-black hover:bg-black hover:text-white"
+            } ${isListening ? "bg-green-200" : ""}`}
+            onClick={!isListening ? handleSubmit : undefined}
           >
-            Submit
+            {isListening ? "Listening..." : "Submit"}
           </div>
         </div>
         <textarea
