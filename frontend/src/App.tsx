@@ -7,12 +7,12 @@ import RecordPage from "./pages/RecordPage/RecordPage";
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage></HomePage>}></Route>
-      <Route path="/recents" element={<RecentsPage></RecentsPage>}></Route>
-      <Route path="/record" element={<RecordPage></RecordPage>}></Route>
+      <Route path="/" element={<HomePage />}></Route>
+      <Route path="/recents" element={<RecentsPage />}></Route>
+      <Route path="/record" element={<RecordPage />}></Route>
       <Route
         path="/favourites"
-        element={<FavouritesPage></FavouritesPage>}
+        element={<FavouritesPage />}
       ></Route>
     </Routes>
   );
