@@ -24,7 +24,7 @@ const Navbar = ({ title }: NavbarProps) => {
           </div>
 
           <div className="flex p-2 px-6 pt-2 border-2 border-green-800 bg-green-800 rounded-lg text-white">
-            Logout
+            <Link to={"/"}>Log Out</Link>
           </div>
         </div>
       </div>
