@@ -3,7 +3,7 @@ import { FaChevronRight } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { IoCopyOutline } from "react-icons/io5";
+import { IoCopySharp } from "react-icons/io5";
 import { useState } from "react";
 
 type FavouritesCardProps = {
@@ -69,10 +69,7 @@ const FavouritesCard = ({
             <div className="w-8"></div>
             <div>{favourite}</div>
           </div>
-          <IoCopyOutline
-            className="text-xl"
-            onClick={handleCopy}
-          ></IoCopyOutline>
+          <IoCopySharp className="text-xl" onClick={handleCopy}></IoCopySharp>
         </div>
       )}
     </div>

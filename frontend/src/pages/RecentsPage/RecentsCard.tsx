@@ -1,15 +1,16 @@
-import { FaRegHeart } from "react-icons/fa";
-import { IoCopyOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa";
+import { IoCopySharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 
 type RecentsCardsProps = {
-  recent: string;
+  text: string;
+  liked: boolean;
   index: number;
 };
 
-const RecentsCard = ({ recent, index }: RecentsCardsProps) => {
+const RecentsCard = ({ text, liked, index }: RecentsCardsProps) => {
   const handleCopy = () => {
-    navigator.clipboard.writeText(recent);
+    navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,
@@ -29,10 +30,10 @@ const RecentsCard = ({ recent, index }: RecentsCardsProps) => {
         index % 2 === 0 ? "bg-green-50" : "bg-white"
       }`}
     >
-      <div>{recent}</div>
+      <div>{text}</div>
       <div className="flex items-center space-x-4 text-xl">
-        <FaRegHeart onClick={handleLike} />
-        <IoCopyOutline onClick={handleCopy} />
+        <FaHeart onClick={handleLike} className={liked ? "text-red-600" : ""} />
+        <IoCopySharp onClick={handleCopy} />
       </div>
     </div>
   );
