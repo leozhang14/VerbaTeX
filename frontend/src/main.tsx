@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react';
 import App from './App.tsx'
 import './index.css'
+import AppTest from "./AppTest.tsx";
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN
 const client_id =  import.meta.env.VITE_AUTH0_CLIENT_ID
@@ -17,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
                 redirect_uri: "http://localhost:5173"
             }}
         >
-            <App />
+            <AppTest></AppTest>
         </Auth0Provider>,
     </StrictMode>,
 )
