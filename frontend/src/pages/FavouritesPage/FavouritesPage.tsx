@@ -26,10 +26,11 @@ const FavouritesPage = () => {
         <div className="w-1/2 flex flex-col">
           {data.favourites.map((fav, index) => (
             <FavouritesCard
-              index={index}
-              functionType={fav.functionType}
-              favourite={fav.favourite}
-            ></FavouritesCard>
+                key={index}
+                index={index}
+                functionType={fav.functionType}
+                favourite={fav.favourite}
+            />
           ))}
         </div>
       </div>
