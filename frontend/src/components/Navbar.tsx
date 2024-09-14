@@ -7,7 +7,7 @@ type NavbarProps = {
 
 const Navbar = ({ title }: NavbarProps) => {
   return (
-    <div className="container mx-auto p-5 flex flex-col bg-blue-50">
+    <div className="container mx-auto p-5 flex flex-col">
       <div className="flex items-center justify-between">
         <div className="text-5xl font-bold">VerbaTeX</div>
         <div className="flex space-x-4">
@@ -24,7 +24,7 @@ const Navbar = ({ title }: NavbarProps) => {
           </div>
 
           <div className="flex p-2 px-6 pt-2 border-2 border-green-800 bg-green-800 rounded-lg text-white">
-            Logout
+            <Link to={"/"}>Log Out</Link>
           </div>
         </div>
       </div>
