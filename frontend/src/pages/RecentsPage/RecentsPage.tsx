@@ -12,7 +12,7 @@ const data = {
 const RecentsPage = () => {
   return (
     <div>
-      <Navbar title="Recently used"></Navbar>
+      <Navbar title="Recently used" location="recents"></Navbar>
       <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="w-1/2 flex flex-col">
           {data.recents.map((recent, index) => (
