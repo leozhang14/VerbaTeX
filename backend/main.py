@@ -19,7 +19,6 @@ FILE_NAME   = 'file1.json'
 def index():
     return { 'status' : 'ok' }, 200
 
-
 @app.route("/upload", methods=['POST'])
 def upload():
     # Check that the post body is valid JSON
@@ -64,7 +63,6 @@ def download():
         else:
             return { 'error': 'Unknown error' }, 500
 
-
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=3001)
 
