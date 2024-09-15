@@ -24,6 +24,7 @@ const FavouritesCard = ({
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,
+      position: "bottom-left"
     });
   };
 

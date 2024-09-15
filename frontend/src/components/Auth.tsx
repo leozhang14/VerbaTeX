@@ -8,7 +8,7 @@ export const signUp = async (email: string, password: string, navigate: (path: s
     console.log("User signed up:", userCredential.user);
   } catch (error) {
     console.error("Error signing up:", error);
-    alert(error)
+    alert(error);
   }
 };
 
