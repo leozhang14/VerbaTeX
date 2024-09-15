@@ -6,9 +6,34 @@ import styles from "../../styles/RecordPage.module.css";
 import { toast } from "react-toastify";
 import { auth } from '../../firebase';
 import { saveEquation } from "../../firestore";
+import { useState } from "react";
+import { fetchEquationData } from '../../equationService'
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
+  const [equationId, setEquationId] = useState<string | null>(null);
+  const [latex, setLatex] = useState();
+  const [img, setImg] = useState();
+  
+  // TODO update these fields when got
+//   useEffect(() => {
+//     const handleFetch = async () => {
+//       try {
+//         const user = auth.currentUser;
+//         if (user) {
+//             const result = await fetchEquationData(user.uid, equationId);
+//             setLatex(result.latex_code);
+//             setImg(result.img_binary)
+//         }
+//         } catch (error) {
+//             console.log('Error fetching latex and preview:', error);  
+//         }
+//     };
+
+//     if (userId && equationId) {
+//       handleFetch();
+//     }
+//   }, [userId, equationId]);
 
   const handleOnClick = () => {
     if (isListening) {
@@ -27,13 +52,22 @@ const RecordPage = () => {
     try {
       const user = auth.currentUser;
       if (user) {
-        await saveEquation(user.uid, text, false);
+        const newEquationId = await saveEquation(user.uid, text, false);
+        setEquationId(newEquationId);
+
         toast.success("Text has been submitted", {
           autoClose: 2000,
           hideProgressBar: true,
           position: "bottom-left"
         });
         setText("");
+  
+        if (equationId) {
+            const result = await fetchEquationData(text, user.uid, equationId); 
+            setLatex(result.latex_code);
+            setImg(result.img_binary);
+        }
+  
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
@@ -50,6 +84,7 @@ const RecordPage = () => {
       });
     }
   };
+  
 
   return (
     <div>
@@ -84,11 +119,16 @@ const RecordPage = () => {
           </div>
         </div>
         <textarea
-          rows={5}
-          cols={80}
-          placeholder="Results here..."
-          className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-8 p-4 rounded-lg"
+            rows={5}
+            cols={80}
+            placeholder="Results here..."
+            className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-8 p-4 rounded-lg"
+            value={latex || ''}
+            readOnly
         />
+        {img && (
+            <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
+        )}
       </div>
     </div>
   );

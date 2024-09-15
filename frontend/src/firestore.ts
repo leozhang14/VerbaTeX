@@ -1,26 +1,31 @@
 import { db } from './firebase';
 import { collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
-export const saveEquation = async (userId: string, equation: string, liked: boolean) => {
-  try {
-    if (liked) {
-        await addDoc(collection(db, `users/${userId}/favourites`), {
-            equation,
-            timestamp: new Date(),
-        });
-    } else {
-        await addDoc(collection(db, `users/${userId}/recents`), {
-            equation,
-            timestamp: new Date(),
-        });
+// TODO optional field latex and image to be added
+export const saveEquation = async (userId: string, equation: string, liked: boolean): Promise<string> => {
+    try {
+        let docRef;
+        if (liked) {
+            docRef = await addDoc(collection(db, `users/${userId}/favourites`), {
+                equation,
+                timestamp: new Date(),
+            });
+        } else {
+            docRef = await addDoc(collection(db, `users/${userId}/recents`), {
+                equation,
+                timestamp: new Date(),
+            });
+        }
+        console.log("Equation saved with ID:", docRef.id);
+        return docRef.id;
+    } catch (error) {
+        console.error("Error saving equation:", error);
+        throw error;
     }
+  };
 
-    console.log("Equation saved!");
-  } catch (error) {
-    console.error("Error saving equation:", error);
-  }
-};
 
+// TODO add fetch field latex code and img
 export const fetchEquations = async (userId: string, liked: boolean) => {
   let collectionPath = `users/${userId}/recents`;
 
@@ -64,9 +69,6 @@ export const removeFromRecents = async (userId: string, equationId: string) => {
 
 export const editEquation = async (userId: string, equationId: string, newEquation: string) => {
     try {
-        const recentsDocRef = doc(db, `users/${userId}/recents`, equationId);
-        await updateDoc(recentsDocRef, { equation: newEquation });
-    
         const favouritesDocRef = doc(db, `users/${userId}/favourites`, equationId);
         await updateDoc(favouritesDocRef, { equation: newEquation });
     

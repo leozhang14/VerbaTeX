@@ -6,8 +6,11 @@ import openai
 import logging
 import subprocess
 import boto3
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Load environment variables from the .env file
 load_dotenv()
