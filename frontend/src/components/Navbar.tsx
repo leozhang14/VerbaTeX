@@ -23,8 +23,8 @@ const Navbar = ({ title, location }: NavbarProps) => {
             to={"/record"}
             className={`flex p-2 px-6 border-2 border-transparent rounded-lg transition-all duration-300 ${
               location === "record"
-                ? "bg-green-600 text-white"
-                : "hover:border-green-800"
+                ? "border-b-green-800 border-2 rounded-none"
+                : "hover:scale-110 transition ease-in "
             }`}
           >
             Record
@@ -33,8 +33,8 @@ const Navbar = ({ title, location }: NavbarProps) => {
             to={"/recents"}
             className={`flex p-2 px-6 border-2 border-transparent rounded-lg transition-all duration-300 ${
               location === "recents"
-                ? "bg-green-600 text-white"
-                : "hover:border-green-800"
+                ? "border-b-green-800 border-2 rounded-none"
+                : "hover:scale-110 transition ease-in"
             }`}
           >
             Recents
@@ -43,8 +43,8 @@ const Navbar = ({ title, location }: NavbarProps) => {
             to={"/favourites"}
             className={`flex p-2 px-6 border-2 border-transparent rounded-lg transition-all duration-300 ${
               location === "favourites"
-                ? "bg-green-600 text-white"
-                : "hover:border-green-800"
+                ? "border-b-green-800 border-2 rounded-none"
+                : "hover:scale-110 transition ease-in"
             }`}
           >
             Favourites
@@ -52,12 +52,13 @@ const Navbar = ({ title, location }: NavbarProps) => {
           <Dropdown email={auth.currentUser?.email}></Dropdown>
         </div>
       </header>
-
-      <div className="pt-20">
-        <div className="flex justify-center mt-16 text-3xl bg-white p-4">
-          {title}
+      {!(location === "home") && (
+        <div className="pt-20">
+          <div className="flex justify-center mt-16 text-3xl bg-white p-4">
+            {title}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

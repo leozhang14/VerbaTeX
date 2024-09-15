@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async () => {
     await setPersistence(auth, browserLocalPersistence);
     await login(email, password, navigate);
-    toast.success("Logged out successfully", {
+    toast.success("Logged in successfully", {
       autoClose: 1000,
       hideProgressBar: true,
       position: "bottom-left",
@@ -25,7 +25,7 @@ const Login = () => {
     <div className="relative flex items-center justify-end p-2">
       <button
         onClick={showFields ? handleLogin : () => setShowFields(!showFields)}
-        className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 absolute top-2 right-4 z-10"
+        className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 absolute top-2 right-4 z-10 w-32"
       >
         Log In
       </button>
@@ -33,7 +33,7 @@ const Login = () => {
       <div
         className={`flex space-x-4 transform transition-transform duration-500 ease-in-out ${
           showFields
-            ? "translate-x-[-125px] opacity-100"
+            ? "translate-x-[-150px] opacity-100"
             : "translate-x-full opacity-0"
         }`}
       >

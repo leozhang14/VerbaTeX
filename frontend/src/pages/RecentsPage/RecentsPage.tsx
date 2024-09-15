@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import RecentsCard from "./RecentsCard";
 import { auth } from "../../firebase";
 import { fetchEquations } from "../../firestore";
+import Spinner from "../../components/Spinner";
 
 type Recent = {
   text: string;
@@ -24,10 +25,9 @@ const RecentsPage = () => {
           const formattedRecents = equations.map((eq) => ({ // TODO add the other fields and send
             id: eq.id,
             text: eq.function,
-            liked: false
+            liked: false,
           }));
           setRecents(formattedRecents);
-
         } catch (error) {
           console.error("Error fetching recents:", error);
         }
@@ -39,10 +39,6 @@ const RecentsPage = () => {
 
     getRecents();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -60,7 +56,7 @@ const RecentsPage = () => {
         </div>
         {recents.length === 0 && (
           <div className="flex justify-center text-xl italic">
-            Uh oh, this is empty!
+            {loading ? <Spinner></Spinner> : "Uh oh, this is empty!"}
           </div>
         )}
       </div>
