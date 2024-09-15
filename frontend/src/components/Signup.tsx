@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { signUp } from './Auth';
+import { useNavigate } from "react-router-dom";
 import './slide.css';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showFields, setShowFields] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
     try {
-      await signUp(email, password);
+      await signUp(email, password, navigate);
       console.log("Signed up successfully");
     } catch (error) {
       console.error("Sign up failed", error);

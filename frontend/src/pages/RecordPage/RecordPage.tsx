@@ -4,10 +4,11 @@ import { FaMicrophone } from "react-icons/fa";
 import useSpeechRecognition from "../../hooks/useSpeechRecognitionHook";
 import styles from "../../styles/RecordPage.module.css";
 import { toast } from "react-toastify";
+import { auth } from '../../firebase';
+import { saveEquation } from "../../firestore";
 
 const RecordPage = () => {
-  const { text, startListening, stopListening, isListening, setText } =
-    useSpeechRecognition();
+  const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
 
   const handleOnClick = () => {
     if (isListening) {
@@ -22,26 +23,41 @@ const RecordPage = () => {
     setText(e.target.value);
   };
 
-  const handleSubmit = () => {
-    console.log(text);
-    toast.success("Text has been submitted", {
-      autoClose: 2000,
-      hideProgressBar: true,
-    });
+  const handleSubmit = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        await saveEquation(user.uid, text, false);
+        toast.success("Text has been submitted", {
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        setText("");
+      } else {
+        toast.error("User not authenticated", {
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving equation:", error);
+      toast.error("Error submitting text", {
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+    }
   };
 
   return (
     <div>
-      <Navbar title="Record new commands" location="record"></Navbar>
+      <Navbar title="Record new commands" location="record" />
       <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="flex items-center space-x-3">
           <div
-            className={`${styles.mic} ${
-              isListening ? styles.listening : ""
-            } bg-green-500 rounded-full w-24 h-24 flex items-center justify-center text-white`}
+            className={`${styles.mic} ${isListening ? styles.listening : ""} bg-green-600 rounded-full w-24 h-24 flex items-center justify-center text-white`}
             onClick={handleOnClick}
           >
-            <FaMicrophone className="text-3xl"></FaMicrophone>
+            <FaMicrophone className="text-3xl" />
           </div>
         </div>
         <div className="flex flex-col mt-2">
@@ -52,11 +68,11 @@ const RecordPage = () => {
             className="border-2 border-black focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg"
             value={text}
             onChange={handleOnChange}
-          ></textarea>
+          />
           <div
             className={`ml-auto p-2 px-4 border-2 rounded-lg mt-2 ${
               isListening
-                ? "border-green-500 bg-green-100 text-green-700 cursor-not-allowed"
+                ? "border-green-600 bg-green-100 text-green-700 cursor-not-allowed"
                 : "border-black hover:bg-black hover:text-white"
             } ${isListening ? "bg-green-200" : ""}`}
             onClick={!isListening ? handleSubmit : undefined}
@@ -69,10 +85,11 @@ const RecordPage = () => {
           cols={80}
           placeholder="Results here..."
           className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-8 p-4 rounded-lg"
-        ></textarea>
+        />
       </div>
     </div>
   );
 };
 
 export default RecordPage;
+
