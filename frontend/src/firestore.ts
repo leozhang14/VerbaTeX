@@ -3,16 +3,16 @@ import { collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc } from "f
 
 export const saveEquation = async (userId: string, equation: string, liked: boolean) => {
   try {
-    await addDoc(collection(db, `users/${userId}/recents`), {
-      equation,
-      timestamp: new Date(),
-    });
-
     if (liked) {
-      await addDoc(collection(db, `users/${userId}/favourites`), {
-        equation,
-        timestamp: new Date(),
-      });
+        await addDoc(collection(db, `users/${userId}/favourites`), {
+            equation,
+            timestamp: new Date(),
+        });
+    } else {
+        await addDoc(collection(db, `users/${userId}/recents`), {
+            equation,
+            timestamp: new Date(),
+        });
     }
 
     console.log("Equation saved!");
