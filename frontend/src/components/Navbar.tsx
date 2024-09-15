@@ -15,17 +15,19 @@ const Navbar = ({ title, location }: NavbarProps) => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await logout(navigate);
       toast.success("Logged out successfully", {
         autoClose: 1000,
         hideProgressBar: true,
+        position: "bottom-left",
       });
-      navigate("/");
+
       console.log("Logged out successfully");
     } catch (error) {
       toast.error("Logged out successfully", {
         autoClose: 1000,
         hideProgressBar: true,
+        position: "bottom-left",
       });
       console.error("Logout failed", error);
     }
