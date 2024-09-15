@@ -46,7 +46,7 @@ const FavouritesCard = ({
           hideProgressBar: true,
           position: "bottom-left"
         });
-        onDelete(id); // Notify parent component to remove the item from the list
+        onDelete(id);
       } catch (error) {
         console.error("Error deleting favourite:", error);
         toast.error("Failed to delete favourite", {
@@ -85,7 +85,7 @@ const FavouritesCard = ({
           <MdEdit className="text-2xl transform transition-transform duration-200 hover:scale-125" />
           <FaTrash
             className="text-2xl transform transition-transform duration-200 hover:scale-125"
-            onClick={handleDelete} // Attach delete handler
+            onClick={handleDelete}
           />
         </div>
       </div>
