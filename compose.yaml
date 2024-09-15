@@ -5,9 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3001:3001
-    environment:
-      - AWS_ACCESS_KEY
-      - AWS_SECRET_KEY
+    env_file: 
+      - ./backend/.env
     volumes:
       - ./backend/output:/backend/output
     stdin_open: true

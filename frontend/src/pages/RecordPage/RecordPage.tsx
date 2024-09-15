@@ -6,15 +6,20 @@ import styles from "../../styles/RecordPage.module.css";
 import { toast } from "react-toastify";
 import { auth } from '../../firebase';
 import { saveEquation } from "../../firestore";
+import { useState } from "react";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
+
+  const [latex, setLatex] = useState("");
 
   const handleOnClick = () => {
     if (isListening) {
       console.log(text);
       stopListening();
     } else {
+      setText("")
+      setLatex("")
       startListening();
     }
   };
@@ -31,12 +36,30 @@ const RecordPage = () => {
         toast.success("Text has been submitted", {
           autoClose: 2000,
           hideProgressBar: true,
+          position: "bottom-left"
         });
-        setText("");
+        try {
+          // Make the GET request to the backend endpoint, passing the parameter in the query string
+          const response = await fetch(`http://localhost:3001/gpt-query?text=${encodeURIComponent(text)}`, {
+            method: 'GET',
+          });
+          // Check if the response is ok
+          if (response.ok) {
+            // Parse the JSON response
+            const data = await response.json();
+            console.log(data)
+            setLatex(data.response);
+          } else {
+            console.error('Failed to fetch from backend');
+          }
+        } catch (error) {
+          console.error('Error occurred while fetching:', error);
+        }
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
           hideProgressBar: true,
+          position: "bottom-left"
         });
       }
     } catch (error) {
@@ -44,6 +67,7 @@ const RecordPage = () => {
       toast.error("Error submitting text", {
         autoClose: 2000,
         hideProgressBar: true,
+        position: "bottom-left"
       });
     }
   };
@@ -83,6 +107,7 @@ const RecordPage = () => {
         <textarea
           rows={5}
           cols={80}
+          value={latex}
           placeholder="Results here..."
           className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-8 p-4 rounded-lg"
         />

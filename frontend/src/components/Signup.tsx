@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { signUp } from "./Auth";
 import { useNavigate } from "react-router-dom";
-import "./slide.css";
-
 import { toast } from "react-toastify";
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+import { auth } from '../firebase';
+import './slide.css';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -13,17 +15,20 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await signUp(email, password, navigate);
       navigate("/record");
       toast.success("Signed up successfully", {
         autoClose: 1000,
         hideProgressBar: true,
+        position: "bottom-left"
       });
       console.log("Signed up successfully");
     } catch (error) {
       toast.error("Signed up failed", {
         autoClose: 1000,
         hideProgressBar: true,
+        position: "bottom-left"
       });
       console.error("Sign up failed", error);
     }

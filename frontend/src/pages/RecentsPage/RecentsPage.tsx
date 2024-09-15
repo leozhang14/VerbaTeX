@@ -19,12 +19,13 @@ const RecentsPage = () => {
       if (user) {
         try {
           const equations = await fetchEquations(user.uid, false);
-          setRecents(
-            equations.map((eq) => ({
-              text: eq.equation,
-              liked: eq.liked || false,
-            }))
-          );
+          const formattedRecents = equations.map((eq) => ({
+            id: eq.id,
+            text: eq.function,
+            liked: false
+          }));
+          setRecents(formattedRecents);
+
         } catch (error) {
           console.error("Error fetching recents:", error);
         }

@@ -12,7 +12,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+        setUser(user);
     });
     return () => unsubscribe();
   }, []);
