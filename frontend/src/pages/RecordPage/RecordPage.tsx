@@ -7,41 +7,45 @@ import { toast } from "react-toastify";
 import { auth } from "../../firebase";
 import { saveEquation } from "../../firestore";
 import { useState } from "react";
-import { fetchEquationData } from '../../equationService'
+import { fetchEquationData } from "../../equationService";
+import Spinner from "../../components/Spinner";
 
 const RecordPage = () => {
-  const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
-//   const [equationId, setEquationId] = useState<string | null>(null);
-  const [latex, setLatex] = useState();
+  const { text, startListening, stopListening, isListening, setText } =
+    useSpeechRecognition();
+  //   const [equationId, setEquationId] = useState<string | null>(null);
+  const [latex, setLatex] = useState("");
   const [img, setImg] = useState();
-  
-  // TODO update these fields when got
-//   useEffect(() => {
-//     const handleFetch = async () => {
-//       try {
-//         const user = auth.currentUser;
-//         if (user) {
-//             const result = await fetchEquationData(user.uid, equationId);
-//             setLatex(result.latex_code);
-//             setImg(result.img_binary)
-//         }
-//         } catch (error) {
-//             console.log('Error fetching latex and preview:', error);  
-//         }
-//     };
+  const [isLoading, setIsLoading] = useState(false);
 
-//     if (userId && equationId) {
-//       handleFetch();
-//     }
-//   }, [userId, equationId]);
+  // TODO update these fields when got
+  //   useEffect(() => {
+  //     const handleFetch = async () => {
+  //       try {
+  //         const user = auth.currentUser;
+  //         if (user) {
+  //             const result = await fetchEquationData(user.uid, equationId);
+  //             setLatex(result.latex_code);
+  //             setImg(result.img_binary)
+  //         }
+  //         } catch (error) {
+  //             console.log('Error fetching latex and preview:', error);
+  //         }
+  //     };
+
+  //     if (userId && equationId) {
+  //       handleFetch();
+  //     }
+  //   }, [userId, equationId]);
 
   const handleOnClick = () => {
     if (isListening) {
       console.log(text);
       stopListening();
     } else {
-      setText("")
-    //   setLatex("")
+      setText("");
+      setLatex("");
+      setIsLoading(false);
       startListening();
     }
   };
@@ -51,6 +55,7 @@ const RecordPage = () => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const user = auth.currentUser;
       if (user) {
@@ -62,17 +67,14 @@ const RecordPage = () => {
           hideProgressBar: true,
           position: "bottom-left",
         });
-        setText("");
-  
+
         if (newEquationId) {
-            const result = await fetchEquationData(text, user.uid, newEquationId); 
-            console.log('result:', result);
-            
-            setLatex(result.latex_code);
-            setImg(result.img_base64);
-            
+          const result = await fetchEquationData(text, user.uid, newEquationId);
+          console.log("result:", result);
+
+          setLatex(result.latex_code);
+          setImg(result.img_base64);
         }
-  
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
@@ -88,8 +90,8 @@ const RecordPage = () => {
         position: "bottom-left",
       });
     }
+    setIsLoading(false);
   };
-  
 
   return (
     <div>
@@ -105,38 +107,43 @@ const RecordPage = () => {
             <FaMicrophone className="text-3xl" />
           </div>
         </div>
-        <div className="flex flex-col mt-2">
-          <textarea
-            rows={5}
-            cols={80}
-            placeholder="Direct audio transcription here..."
-            className="border-2 border-black focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg"
-            value={text}
-            onChange={handleOnChange}
-          />
+        <div className="flex flex-col mt-2 2 w-3/5">
+          <div className="flex space-x-6">
+            <textarea
+              rows={12}
+              cols={80}
+              placeholder="Direct audio transcription here..."
+              className="border-2 border-black focus:outline-none focus:ring-0 mt-5  p-4 rounded-lg"
+              value={text}
+              onChange={handleOnChange}
+            />
+            <textarea
+              rows={12}
+              cols={80}
+              placeholder="Results here..."
+              className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg"
+              value={latex || ""}
+              readOnly
+            />
+          </div>
           <div
-            className={`ml-auto p-2 px-4 border-2 rounded-lg mt-2 ${
-              isListening
-                ? "border-green-600 bg-green-100 text-green-700 cursor-not-allowed"
-                : "border-black hover:bg-black hover:text-white cursor-pointer"
-            } ${isListening ? "bg-green-200" : ""}`}
+            className={`mr-auto p-2 px-4 border-2  rounded-lg mt-4 border-black hover:bg-black hover:text-white cursor-pointer
+            `}
             onClick={!isListening ? handleSubmit : undefined}
           >
-            {isListening ? "Listening..." : "Submit"}
+            {!isLoading && isListening && <Spinner size="sm"></Spinner>}
+            {!isLoading && !isListening && "Submit"}
+            {isLoading && <Spinner size="sm"></Spinner>}
           </div>
         </div>
-        <textarea
-            rows={5}
-            cols={80}
-            placeholder="Results here..."
-            className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-8 p-4 rounded-lg"
-            value={latex || ''}
-            readOnly
-        />
-        
-        {img && 
-            <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
-        }
+
+        {img && (
+          <img
+            src={`data:image/png;base64,${img}`}
+            alt="Equation Preview"
+            className="mt-4"
+          />
+        )}
       </div>
     </div>
   );
