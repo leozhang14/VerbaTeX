@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import RecentsCard from "./RecentsCard";
-import { auth } from '../../firebase'; 
+import { auth } from "../../firebase";
 import { fetchEquations } from "../../firestore";
 
 type Recent = {
@@ -10,8 +10,8 @@ type Recent = {
 };
 
 const RecentsPage = () => {
-  const [recents, setRecents] = useState<Recent[]>([]); 
-  const [loading, setLoading] = useState<boolean>(true); 
+  const [recents, setRecents] = useState<Recent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getRecents = async () => {
@@ -19,10 +19,12 @@ const RecentsPage = () => {
       if (user) {
         try {
           const equations = await fetchEquations(user.uid, false);
-          setRecents(equations.map(eq => ({
-            text: eq.equation,
-            liked: eq.liked || false
-          })));
+          setRecents(
+            equations.map((eq) => ({
+              text: eq.equation,
+              liked: eq.liked || false,
+            }))
+          );
         } catch (error) {
           console.error("Error fetching recents:", error);
         }
@@ -36,7 +38,7 @@ const RecentsPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -53,6 +55,11 @@ const RecentsPage = () => {
             />
           ))}
         </div>
+        {recents.length === 0 && (
+          <div className="flex justify-center text-xl italic">
+            Uh oh, this is empty!
+          </div>
+        )}
       </div>
     </div>
   );

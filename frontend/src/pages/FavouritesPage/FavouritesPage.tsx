@@ -24,6 +24,7 @@ const FavouritesPage = () => {
             functionType: "unknown", // Modify this if you have a way to determine function type
             favourite: eq.equation,
           }));
+          console.log(formattedFavourites);
           setFavourites(formattedFavourites);
         } catch (error) {
           console.error("Error fetching favourites:", error);
@@ -38,7 +39,7 @@ const FavouritesPage = () => {
     <div>
       <Navbar title="Favourite commands" location="favourites"></Navbar>
       <div className="container mx-auto p-5 flex flex-col items-center">
-        <div className="w-1/2 flex flex-col">
+        <div className="w-1/2 flex flex-col items">
           {favourites.map((fav, index) => (
             <FavouritesCard
               key={index}
@@ -47,6 +48,11 @@ const FavouritesPage = () => {
               favourite={fav.favourite}
             />
           ))}
+          {favourites.length === 0 && (
+            <div className="flex justify-center text-xl italic">
+              Uh oh, this is empty!
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -54,4 +60,3 @@ const FavouritesPage = () => {
 };
 
 export default FavouritesPage;
-
