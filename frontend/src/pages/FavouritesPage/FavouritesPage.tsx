@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import FavouritesCard from "./FavouritesCard";
 import { fetchEquations } from "../../firestore";
 import { auth } from "../../firebase";
+import Spinner from "../../components/Spinner";
 
 type Favourite = {
   functionType: string;
@@ -14,6 +15,7 @@ type Favourite = {
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState<Favourite[]>([]);
   const user = auth.currentUser;
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getFavourites = async () => {
@@ -24,7 +26,7 @@ const FavouritesPage = () => {
             id: eq.id,
             functionType: "unknown",
             favourite: eq.function,
-            liked: true
+            liked: true,
           }));
           console.log(formattedFavourites);
           setFavourites(formattedFavourites);
@@ -32,13 +34,16 @@ const FavouritesPage = () => {
           console.error("Error fetching favourites:", error);
         }
       }
+      setLoading(false);
     };
 
     getFavourites();
   }, [user]);
 
   const handleDelete = (id: string) => {
-    setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== id));
+    setFavourites((prevFavourites) =>
+      prevFavourites.filter((fav) => fav.id !== id)
+    );
   };
 
   return (
@@ -58,7 +63,7 @@ const FavouritesPage = () => {
           ))}
           {favourites.length === 0 && (
             <div className="flex justify-center text-xl italic">
-              Uh oh, this is empty!
+              {loading ? <Spinner></Spinner> : "Uh oh, this is empty!"}
             </div>
           )}
         </div>
