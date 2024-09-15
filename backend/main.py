@@ -1,13 +1,43 @@
 import os
 import json
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import openai
 import logging
 import subprocess
 import boto3
+from flask_cors import CORS
+from num2words import num2words
+import re
+
+def convert_to_words(input_string):
+    # Define a dictionary to map symbols to words
+    symbol_map = {
+        '/': 'divided by',
+        '*': 'times',
+        '=': 'equals',
+        '+': 'plus',
+        '-': 'minus',
+        '^': 'to the power of'
+    }
+
+    # Replace symbols in the string
+    for symbol, word in symbol_map.items():
+        input_string = input_string.replace(symbol, word)
+    
+    # Function to convert numbers to their word form
+    def replace_number(match):
+        number = match.group(0)
+        return num2words(int(number))
+
+    # Use regex to find all numbers and replace them with words
+    output_string = re.sub(r'\d+', replace_number, input_string)
+
+    return output_string
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -38,13 +68,13 @@ def index():
 @app.route('/gpt-query', methods=['GET'])
 def gpt_query():
     # Get the query from the URL parameters
-    query = "Draw a three dimensional surface plot of z equals x squared plus abs of four natural log of abs y."
+    query = convert_to_words(request.args.get('text'))
     user_id = "LeoZ"
     instance_id = "001"
     # Access the OPENAI_KEY environment variable
     openai_key = os.getenv("OPENAI_KEY")
 
-    if not query:
+    if not query or not user_id or not instance_id:
         return jsonify({'error': 'Query parameter is missing'}), 400
     
     try:
@@ -66,7 +96,7 @@ def gpt_query():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/tex_png', methods=[])
+@app.route('/tex_png', methods=['POST'])
 def tex_to_png(latex_string, user_id, instance_id):
     if not latex_string:
         return jsonify({"error": "No LaTeX string provided"}), 400

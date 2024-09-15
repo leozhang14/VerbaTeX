@@ -2,3 +2,5 @@ flask
 openai
 python-dotenv
 boto3
+flask-cors
+num2words
