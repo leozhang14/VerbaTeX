@@ -2,7 +2,6 @@ import { toast } from "react-toastify";
 import { FaChevronRight, FaChevronDown, FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoCopySharp } from "react-icons/io5";
-import { FaCheck } from "react-icons/fa";
 import { useState } from "react";
 import { auth } from "../../firebase";
 import { removeFromFavourites } from "../../firestore";
@@ -23,13 +22,7 @@ const FavouritesCard = ({
   onDelete
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
-  const [isEditting, setIsEditting] = useState(false);
-  const [formData, setFormData] = useState(functionType);
-
-  const handleSubmit = () => {
-    console.log(formData);
-    setIsEditting(false);
-  };
+  const user = auth.currentUser;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(favourite);
@@ -86,32 +79,14 @@ const FavouritesCard = ({
               />
             )}
           </div>
-          {!isEditting && <div className="text-xl">{functionType}</div>}
-          {isEditting && (
-            <div>
-              <input
-                type="text"
-                value={formData}
-                onChange={handleChange}
-                className="p-1 px-2 outline-none border-2 border-green-900 rounded-lg text-lg"
-              ></input>
-            </div>
-          )}
+          <div className="text-xl">{functionType}</div>
         </div>
         <div className="flex items-center space-x-4 text-xl">
-          {isEditting ? (
-            <FaCheck
-              className="text-xl hover:text-green-700 hover:text-2xl"
-              onClick={handleSubmit}
-            ></FaCheck>
-          ) : (
-            <MdEdit
-              className="text-2xl"
-              onClick={() => setIsEditting(true)}
-            ></MdEdit>
-          )}
-
-          <FaTrash></FaTrash>
+          <MdEdit className="text-2xl transform transition-transform duration-200 hover:scale-125" />
+          <FaTrash
+            className="text-2xl transform transition-transform duration-200 hover:scale-125"
+            onClick={handleDelete}
+          />
         </div>
       </div>
 
