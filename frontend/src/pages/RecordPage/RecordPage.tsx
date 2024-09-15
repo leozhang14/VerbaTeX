@@ -10,6 +10,7 @@ import { useState } from "react";
 import { fetchEquationData } from "../../equationService";
 import Spinner from "../../components/Spinner";
 import { IoCopySharp } from "react-icons/io5";
+import { updateEquationWithLatexAndImage } from "../../firestore";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } =
@@ -70,21 +71,22 @@ const RecordPage = () => {
       const user = auth.currentUser;
       if (user) {
         const newEquationId = await saveEquation(user.uid, text, false);
-        // setEquationId(newEquationId);
-
         toast.success("Text has been submitted", {
-          autoClose: 2000,
-          hideProgressBar: true,
-          position: "bottom-left",
+            autoClose: 2000,
+            hideProgressBar: true,
+            position: "bottom-left"
         });
-
-        if (newEquationId) {
-          const result = await fetchEquationData(text, user.uid, newEquationId);
-          console.log("result:", result);
-
-          setLatex(result.latex_code);
-          setImg(result.img_base64);
-        }
+        
+        const result = await fetchEquationData(text, user.uid, newEquationId);
+        console.log('Fetched LaTeX and image:', result);
+  
+        setLatex(result.latex_code);
+        setImg(result.img_base64);
+  
+        await updateEquationWithLatexAndImage(user.uid, newEquationId, result.latex_code, result.img_base64);
+  
+        setText("");
+  
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
@@ -93,7 +95,7 @@ const RecordPage = () => {
         });
       }
     } catch (error) {
-      console.error("Error saving equation:", error);
+      console.error("Error submitting equation:", error);
       toast.error("Error submitting text", {
         autoClose: 2000,
         hideProgressBar: true,

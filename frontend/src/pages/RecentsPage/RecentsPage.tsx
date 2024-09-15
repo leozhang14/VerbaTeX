@@ -8,8 +8,8 @@ import Spinner from "../../components/Spinner";
 type Recent = {
   text: string;
   liked: boolean;
-  latex_code?: string;
-  img_binary?: string;
+  latex?: string;
+  img?: string;
 };
 
 const RecentsPage = () => {
@@ -22,10 +22,12 @@ const RecentsPage = () => {
       if (user) {
         try {
           const equations = await fetchEquations(user.uid, false);
-          const formattedRecents = equations.map((eq) => ({ // TODO add the other fields and send
+          const formattedRecents = equations.map((eq) => ({
             id: eq.id,
             text: eq.function,
             liked: false,
+            latex: eq.latex,
+            img: eq.img
           }));
           setRecents(formattedRecents);
         } catch (error) {
@@ -51,6 +53,8 @@ const RecentsPage = () => {
               text={recent.text}
               liked={recent.liked}
               index={index}
+              latex={recent.latex}
+              img={recent.img}
             /> // pass in proper fields
           ))}
         </div>

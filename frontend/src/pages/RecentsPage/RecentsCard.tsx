@@ -3,18 +3,19 @@ import { IoCopySharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { saveEquation } from "../../firestore";
 import { auth } from "../../firebase";
+import { fetchEquationData } from '../../equationService'
+
 
 type RecentsCardsProps = {
   text: string;
   liked: boolean;
   index: number;
-//   latex_code?: string;
-//   img_binary?: string;
+  latex?: string;
+  img?: string;
 };
 
-const RecentsCard = ({ text, liked, index, 
-    // latex_code, img_binary 
-}: RecentsCardsProps) => {
+const RecentsCard = ({ text, liked, index, latex, img }: RecentsCardsProps) => {
+
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard", {
@@ -35,14 +36,18 @@ const RecentsCard = ({ text, liked, index,
       return;
     }
     const userId = user.uid;
-
+  
     try {
-      await saveEquation(userId, text, true);
-      toast.success("Added to favourites", {
-        autoClose: 1000,
-        hideProgressBar: true,
-        position: "bottom-left",
-      });
+      if (!latex || !img) {
+        const result = await fetchEquationData(text, userId, index.toString());
+        latex = result.latex_code
+        img = result.img_base64
+      }
+  
+      // Now that we have LaTeX and image, save the equation to favorites.
+      await saveEquation(userId, text, true, latex, img);
+  
+      toast.success("Added to favourites", { autoClose: 1000, hideProgressBar: true, position: "bottom-left" });
     } catch (error) {
       console.error("Error saving to favourites:", error);
       toast.error("Failed to add to favourites", {
@@ -52,6 +57,7 @@ const RecentsCard = ({ text, liked, index,
       });
     }
   };
+  
 
   return (
     <div
@@ -59,7 +65,7 @@ const RecentsCard = ({ text, liked, index,
         index % 2 === 0 ? "bg-green-50" : "bg-white"
       }`}
     >
-      <div>{text}</div> TODO replace with latex and on hover show image if there
+      <div>{latex ? latex : text}</div> 
       <div className="flex items-center space-x-4 text-xl">
         <FaHeart
           onClick={handleLike}

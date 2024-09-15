@@ -1,11 +1,10 @@
 import { toast } from "react-toastify";
-import { FaChevronRight, FaChevronDown, FaTrash } from "react-icons/fa";
+import { FaChevronRight, FaChevronDown, FaTrash, FaCheck } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoCopySharp } from "react-icons/io5";
 import { useState } from "react";
 import { auth } from "../../firebase";
 import { removeFromFavourites } from "../../firestore";
-import { FaCheck } from "react-icons/fa";
 import { editEquation } from "../../firestore";
 
 type FavouritesCardProps = {
@@ -13,8 +12,8 @@ type FavouritesCardProps = {
   favourite: string;
   index: number;
   id: string;
-//   latex_code: string;
-//   img_binary: string;
+  latex: string;
+  img: string;
   onDelete: (id: string) => void;
 };
 
@@ -23,20 +22,21 @@ const FavouritesCard = ({
   favourite,
   index,
   id,
-//   latex_code,
-//   img_binary,
+  latex,
+  img,
   onDelete
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isEditting, setIsEditting] = useState(false);
   const [formData, setFormData] = useState(functionType);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
   const handleSubmit = () => {
     const user = auth.currentUser;
     if (user) {
         try {
-            editEquation(user.uid, id, formData)
-            console.log(formData);
+            editEquation(user.uid, id, formData);
             setIsEditting(false);
         } catch (error) {
             console.error("Error editing title:", error);
@@ -47,6 +47,7 @@ const FavouritesCard = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(event.target.value);
   };
+
   const user = auth.currentUser;
 
   const handleCopy = () => {
@@ -83,12 +84,36 @@ const FavouritesCard = ({
     }
   };
 
+  const handleMouseEnter = (event: React.MouseEvent) => {
+    setPopupVisible(true);
+    const { clientX, clientY } = event;
+    // console.log(clientX, clientY);
+    
+    
+    const popupWidth = window.innerWidth * 0.1;
+    const popupHeight = 150;
+
+    const top = clientY;
+    const left = clientX;
+
+    setPopupPosition({ 
+      top: Math.min(top, window.innerHeight - popupHeight - 1000),
+      left: Math.min(left, window.innerWidth - popupWidth - 2000)
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setPopupVisible(false);
+  };
+
   return (
-    <div className="flex flex-col">
+    <div className="relative flex flex-col">
       <div
         className={`flex justify-between p-5 px-7 ${
           index % 2 === 0 ? "bg-green-100" : "bg-white"
         }`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="flex items-center">
           <div className="w-8">
@@ -147,7 +172,7 @@ const FavouritesCard = ({
         >
           <div className="flex items-center">
             <div className="w-8"></div>
-            <div>{favourite}</div> TODO replace with latex and image on hover
+            <div>{latex ? latex : favourite }</div>
           </div>
           <IoCopySharp
             className="cursor-pointer text-xl transform transition-transform duration-200 hover:scale-125"
@@ -155,6 +180,28 @@ const FavouritesCard = ({
           />
         </div>
       </div>
+
+      {popupVisible && img && (
+        <div
+          className="absolute"
+          style={{
+            top: `${popupPosition.top}px`,
+            left: `${popupPosition.left}px`,
+            width: "10vw",
+            height: "auto",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            zIndex: 1000
+          }}
+        >
+          <img
+            src={`data:image/png;base64,${img}`}
+            alt="Equation Preview"
+            style={{ width: "100%", height: "auto", objectFit: "contain" }}
+          />
+        </div>
+      )}
     </div>
   );
 };
