@@ -69,7 +69,7 @@ const RecordPage = () => {
             console.log('result:', result);
             
             setLatex(result.latex_code);
-            setImg(result.img_binary);
+            setImg(result.img_base64);
             
         }
   
@@ -131,11 +131,9 @@ const RecordPage = () => {
             value={latex || ''}
             readOnly
         />
-        <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
-        {img ? 
-            <img src={`data:image/png;charset=utf-8;base64,${img}`} alt="Equation Preview" className="mt-4" />
-            :
-            <p>hi</p>
+        
+        {img && 
+            <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
         }
       </div>
     </div>
