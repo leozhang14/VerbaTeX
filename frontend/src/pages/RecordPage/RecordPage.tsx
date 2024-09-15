@@ -9,6 +9,7 @@ import { saveEquation } from "../../firestore";
 import { useState } from "react";
 import { fetchEquationData } from "../../equationService";
 import Spinner from "../../components/Spinner";
+import { IoCopySharp } from "react-icons/io5";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } =
@@ -17,6 +18,15 @@ const RecordPage = () => {
   const [latex, setLatex] = useState("");
   const [img, setImg] = useState();
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleCopy = (s: string) => {
+    navigator.clipboard.writeText(s);
+    toast.success("Copied to clipboard", {
+      autoClose: 1000,
+      hideProgressBar: true,
+      position: "bottom-left",
+    });
+  };
 
   // TODO update these fields when got
   //   useEffect(() => {
@@ -109,22 +119,34 @@ const RecordPage = () => {
         </div>
         <div className="flex flex-col mt-2 2 w-3/5">
           <div className="flex space-x-6">
-            <textarea
-              rows={12}
-              cols={80}
-              placeholder="Direct audio transcription here..."
-              className="border-2 border-black focus:outline-none focus:ring-0 mt-5  p-4 rounded-lg"
-              value={text}
-              onChange={handleOnChange}
-            />
-            <textarea
-              rows={12}
-              cols={80}
-              placeholder="Results here..."
-              className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg"
-              value={latex || ""}
-              readOnly
-            />
+            <div className="relative w-full">
+              <textarea
+                rows={12}
+                cols={80}
+                placeholder="Direct audio transcription here..."
+                className="border-2 border-black focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg w-full"
+                value={text}
+                onChange={handleOnChange}
+              />
+              <IoCopySharp
+                className="absolute top-7 right-2 text-xl cursor-pointer text-gray-300 hover:text-black"
+                onClick={() => handleCopy(text)}
+              />
+            </div>
+            <div className="relative w-full">
+              <textarea
+                rows={12}
+                cols={80}
+                placeholder="Results here..."
+                className="border-2 border-green-800 focus:outline-none focus:ring-0 mt-5 p-4 rounded-lg w-full"
+                value={latex || ""}
+                readOnly
+              />
+              <IoCopySharp
+                className="absolute top-7 right-2 text-xl cursor-pointer text-gray-300 hover:text-black"
+                onClick={() => handleCopy(latex || "")}
+              />
+            </div>
           </div>
           <div
             className={`mr-auto p-2 px-4 border-2  rounded-lg mt-4 border-black hover:bg-black hover:text-white cursor-pointer
