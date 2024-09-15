@@ -4,7 +4,7 @@ import { FaMicrophone } from "react-icons/fa";
 import useSpeechRecognition from "../../hooks/useSpeechRecognitionHook";
 import styles from "../../styles/RecordPage.module.css";
 import { toast } from "react-toastify";
-import { auth } from '../../firebase';
+import { auth } from "../../firebase";
 import { saveEquation } from "../../firestore";
 import { useState } from "react";
 
@@ -16,8 +16,8 @@ const RecordPage = () => {
       console.log(text);
       stopListening();
     } else {
-      setText("")
-      setLatex("")
+      setText("");
+      setLatex("");
       startListening();
     }
   };
@@ -34,13 +34,13 @@ const RecordPage = () => {
         toast.success("Text has been submitted", {
           autoClose: 2000,
           hideProgressBar: true,
-          position: "bottom-left"
+          position: "bottom-left",
         });
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
           hideProgressBar: true,
-          position: "bottom-left"
+          position: "bottom-left",
         });
       }
     } catch (error) {
@@ -48,7 +48,7 @@ const RecordPage = () => {
       toast.error("Error submitting text", {
         autoClose: 2000,
         hideProgressBar: true,
-        position: "bottom-left"
+        position: "bottom-left",
       });
     }
   };
@@ -57,9 +57,11 @@ const RecordPage = () => {
     <div>
       <Navbar title="Record new commands" location="record" />
       <div className="container mx-auto p-5 flex flex-col items-center">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 cursor-pointer">
           <div
-            className={`${styles.mic} ${isListening ? styles.listening : ""} bg-green-600 rounded-full w-24 h-24 flex items-center justify-center text-white`}
+            className={`${styles.mic} ${
+              isListening ? styles.listening : ""
+            } bg-green-600 rounded-full w-24 h-24 flex items-center justify-center text-white`}
             onClick={handleOnClick}
           >
             <FaMicrophone className="text-3xl" />
@@ -78,7 +80,7 @@ const RecordPage = () => {
             className={`ml-auto p-2 px-4 border-2 rounded-lg mt-2 ${
               isListening
                 ? "border-green-600 bg-green-100 text-green-700 cursor-not-allowed"
-                : "border-black hover:bg-black hover:text-white"
+                : "border-black hover:bg-black hover:text-white cursor-pointer"
             } ${isListening ? "bg-green-200" : ""}`}
             onClick={!isListening ? handleSubmit : undefined}
           >
@@ -98,4 +100,3 @@ const RecordPage = () => {
 };
 
 export default RecordPage;
-
