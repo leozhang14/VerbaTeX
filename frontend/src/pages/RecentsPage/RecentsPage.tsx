@@ -7,6 +7,8 @@ import { fetchEquations } from "../../firestore";
 type Recent = {
   text: string;
   liked: boolean;
+  latex_code?: string;
+  img_binary?: string;
 };
 
 const RecentsPage = () => {
@@ -19,7 +21,7 @@ const RecentsPage = () => {
       if (user) {
         try {
           const equations = await fetchEquations(user.uid, false);
-          const formattedRecents = equations.map((eq) => ({
+          const formattedRecents = equations.map((eq) => ({ // TODO add the other fields and send
             id: eq.id,
             text: eq.function,
             liked: false
@@ -53,7 +55,7 @@ const RecentsPage = () => {
               text={recent.text}
               liked={recent.liked}
               index={index}
-            />
+            /> // pass in proper fields
           ))}
         </div>
         {recents.length === 0 && (

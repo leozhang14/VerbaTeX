@@ -9,20 +9,22 @@ type Favourite = {
   favourite: string;
   id: string;
   liked: boolean;
+  latex_code?: string;
+  img_binary?: string;
 };
 
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState<Favourite[]>([]);
   const user = auth.currentUser;
 
-  useEffect(() => {
+  useEffect(() => { // TODO add thing to wait on getting latex and img and then passing to favourite card
     const getFavourites = async () => {
       if (user) {
         try {
           const fetchedFavourites = await fetchEquations(user.uid, true);
           const formattedFavourites = fetchedFavourites.map((eq) => ({
             id: eq.id,
-            functionType: "unknown",
+            functionType: "enter title here...",
             favourite: eq.function,
             liked: true
           }));

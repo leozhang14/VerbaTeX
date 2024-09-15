@@ -8,9 +8,13 @@ type RecentsCardsProps = {
   text: string;
   liked: boolean;
   index: number;
+//   latex_code?: string;
+//   img_binary?: string;
 };
 
-const RecentsCard = ({ text, liked, index }: RecentsCardsProps) => {
+const RecentsCard = ({ text, liked, index, 
+    // latex_code, img_binary 
+}: RecentsCardsProps) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard", {
@@ -55,7 +59,7 @@ const RecentsCard = ({ text, liked, index }: RecentsCardsProps) => {
         index % 2 === 0 ? "bg-green-50" : "bg-white"
       }`}
     >
-      <div>{text}</div>
+      <div>{text}</div> TODO replace with latex and on hover show image if there
       <div className="flex items-center space-x-4 text-xl">
         <FaHeart
           onClick={handleLike}

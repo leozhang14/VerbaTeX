@@ -9,8 +9,8 @@ import boto3
 from flask_cors import CORS
 from num2words import num2words
 import re
-from io import BytesIO
 import base64
+import requests
 
 def convert_to_words(input_string):
     # Define a dictionary to map symbols to words
@@ -38,6 +38,8 @@ def convert_to_words(input_string):
     return output_string
 
 app = Flask(__name__)
+
+CORS(app)
 
 CORS(app)
 
@@ -71,14 +73,13 @@ def index():
 def gpt_query():
     # Get the query from the URL parameters
     query = convert_to_words(request.args.get('text'))
-    user_id = "LeoZ"
-    instance_id = "001"
+    user_id = request.args.get('user_id')
+    instance_id = request.args.get('instance_id')
     # Access the OPENAI_KEY environment variable
     openai_key = os.getenv("OPENAI_KEY")
 
     if not query or not user_id or not instance_id:
         return jsonify({'error': 'Query parameter is missing'}), 400
-    
     try:
         client = openai.OpenAI(api_key=openai_key)
         completion = client.chat.completions.create(
@@ -88,30 +89,38 @@ def gpt_query():
                 {"role": "user", "content": query}
             ]
         )
-
-        response = completion.choices[0].message.content
-        # Return the message
-        logger.info(response)
-        # Convert LaTeX to PNG (tex_to_png should return binary data)
-        img_binary = tex_to_png(response, user_id, instance_id)
-
-        # Convert binary image data to Base64 string
-        img_base64 = base64.b64encode(img_binary).decode('utf-8')
-
-        logger.info(response)
-        logger.info(img_base64)
-
-        # Return both LaTeX code and the image in Base64 format
-        return jsonify({
-            'latex_code': response,
-            'img_binary': img_base64
-        })
-    
+        latex_code = completion.choices[0].message.content
+        logger.info(latex_code)
+        # Make a GET request to the /tex_png endpoint with LaTeX and user info
+        response = requests.get(
+            'http://localhost:3001/tex_to_png',  # Change this if hosted differently
+            json={
+                'latex_string': latex_code,
+                'user_id': user_id,
+                'instance_id': instance_id
+            }
+        )
+        # Handle the response from /tex_png
+        if response.status_code == 200:
+            img_base64 = response.json().get('img_base64')
+            logger.info(img_base64)
+            return jsonify({
+                'latex_code': latex_code,
+                'img_base64': img_base64
+            })
+        else:
+            return jsonify({'error': 'Failed to generate PNG'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/tex_png', methods=['POST'])
-def tex_to_png(latex_string, user_id, instance_id):
+@app.route('/tex_to_png', methods=['GET'])
+def tex_to_png():
+    latex_string = request.json.get('latex_string')
+    user_id = request.json.get('user_id')
+    instance_id = request.json.get('instance_id')
+    logger.info(latex_string)
+    logger.info(user_id)
+    logger.info(instance_id)
     if not latex_string:
         return jsonify({"error": "No LaTeX string provided"}), 400
     png_name = f'{user_id}_{instance_id}.png'
@@ -147,7 +156,7 @@ def tex_to_png(latex_string, user_id, instance_id):
 
     # Upload the PNG to S3 with the user_id and instance_id as part of the object key
     try:
-        with open('output/LeoZ_001.png', 'rb') as png_file:
+        with open(f'output/{png_name}', 'rb') as png_file:
             s3_client.upload_fileobj(
                 png_file, 
                 S3_BUCKET_NAME, 
@@ -159,7 +168,7 @@ def tex_to_png(latex_string, user_id, instance_id):
         return jsonify({"error": f"Failed to upload to S3: {str(e)}"}), 500
     
     try:
-        with open('output/LeoZ_001.png', 'rb') as png_file:
+        with open(f'output/{png_name}', 'rb') as png_file:
             png_binary = png_file.read()
         logger.info(f"Saved image binary.")
     except Exception as e:
@@ -176,16 +185,16 @@ def tex_to_png(latex_string, user_id, instance_id):
     except FileNotFoundError as e:
         print(f"File not found: {e}")
     
+    # Convert binary image data to Base64 string
+    img_base64 = base64.b64encode(png_binary).decode('utf-8')
+
     logger.info("Tex_to_PNG full success!")
-    return png_binary
+    return jsonify({'img_base64': img_base64}), 200
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    """
-    Endpoint to delete PNG from S3 based on user_id and instance_id
-    """
-    user_id = "LeoZ"
-    instance_id = "001"
+    user_id = request.args.get('user_id')
+    instance_id = request.args.get('instance_id')
 
     if not user_id or not instance_id:
         return jsonify({"error": "No user ID or instance ID provided"}), 400

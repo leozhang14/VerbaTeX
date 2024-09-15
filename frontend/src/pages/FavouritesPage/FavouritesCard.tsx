@@ -6,12 +6,15 @@ import { useState } from "react";
 import { auth } from "../../firebase";
 import { removeFromFavourites } from "../../firestore";
 import { FaCheck } from "react-icons/fa";
+import { editEquation } from "../../firestore";
 
 type FavouritesCardProps = {
   functionType: string;
   favourite: string;
   index: number;
   id: string;
+//   latex_code: string;
+//   img_binary: string;
   onDelete: (id: string) => void;
 };
 
@@ -20,15 +23,25 @@ const FavouritesCard = ({
   favourite,
   index,
   id,
-  onDelete,
+//   latex_code,
+//   img_binary,
+  onDelete
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isEditting, setIsEditting] = useState(false);
   const [formData, setFormData] = useState(functionType);
 
   const handleSubmit = () => {
-    console.log(formData);
-    setIsEditting(false);
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            editEquation(user.uid, id, formData)
+            console.log(formData);
+            setIsEditting(false);
+        } catch (error) {
+            console.error("Error editing title:", error);
+        }
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,7 +147,7 @@ const FavouritesCard = ({
         >
           <div className="flex items-center">
             <div className="w-8"></div>
-            <div>{favourite}</div>
+            <div>{favourite}</div> TODO replace with latex and image on hover
           </div>
           <IoCopySharp
             className="cursor-pointer text-xl transform transition-transform duration-200 hover:scale-125"
