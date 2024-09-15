@@ -20,7 +20,7 @@ const FavouritesCard = ({
   favourite,
   index,
   id,
-  onDelete
+  onDelete,
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isEditting, setIsEditting] = useState(false);
@@ -41,7 +41,7 @@ const FavouritesCard = ({
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,
-      position: "bottom-left"
+      position: "bottom-left",
     });
   };
 
@@ -56,7 +56,7 @@ const FavouritesCard = ({
         toast.success("Favourite deleted", {
           autoClose: 1000,
           hideProgressBar: true,
-          position: "bottom-left"
+          position: "bottom-left",
         });
         onDelete(id);
       } catch (error) {
@@ -64,7 +64,7 @@ const FavouritesCard = ({
         toast.error("Failed to delete favourite", {
           autoClose: 1000,
           hideProgressBar: true,
-          position: "bottom-left"
+          position: "bottom-left",
         });
       }
     }
@@ -81,12 +81,12 @@ const FavouritesCard = ({
           <div className="w-8">
             {isShowMore ? (
               <FaChevronDown
-                className="text-2xl transform transition-transform duration-300"
+                className="cursor-pointer text-2xl transform transition-transform duration-300"
                 onClick={handleShowMore}
               />
             ) : (
               <FaChevronRight
-                className="text-2xl transform transition-transform duration-300"
+                className="cursor-pointer text-2xl transform transition-transform duration-300"
                 onClick={handleShowMore}
               />
             )}
@@ -104,19 +104,19 @@ const FavouritesCard = ({
           )}
         </div>
         <div className="flex items-center space-x-4 text-xl">
-            {isEditting ? (
-                <FaCheck
-                className="text-xl hover:text-green-700 hover:text-2xl transform transition-transform duration-200 hover:scale-125"
-                onClick={handleSubmit}
-                ></FaCheck>
-            ) : (
-                <MdEdit
-                className="text-2xl transform transition-transform duration-200 hover:scale-125"
-                onClick={() => setIsEditting(true)}
-                ></MdEdit>
-            )}
+          {isEditting ? (
+            <FaCheck
+              className="cursor-pointer text-xl hover:text-green-700 hover:text-2xl transform transition-transform duration-200 hover:scale-125"
+              onClick={handleSubmit}
+            ></FaCheck>
+          ) : (
+            <MdEdit
+              className="cursor-pointer text-2xl transform transition-transform duration-200 hover:scale-125"
+              onClick={() => setIsEditting(true)}
+            ></MdEdit>
+          )}
           <FaTrash
-            className="text-2xl transform transition-transform duration-200 hover:scale-125"
+            className="cursor-pointer text-2xl transform transition-transform duration-200 hover:scale-125"
             onClick={handleDelete}
           />
         </div>
@@ -137,7 +137,7 @@ const FavouritesCard = ({
             <div>{favourite}</div>
           </div>
           <IoCopySharp
-            className="text-xl transform transition-transform duration-200 hover:scale-125"
+            className="cursor-pointer text-xl transform transition-transform duration-200 hover:scale-125"
             onClick={handleCopy}
           />
         </div>
