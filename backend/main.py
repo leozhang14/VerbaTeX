@@ -131,7 +131,7 @@ def tex_to_png():
     png_file_path = os.path.join(output_folder, png_name)
     
     # Create the LaTeX file content with the received string
-    if latex_string.startswith("\\begin{tikzpicture}"):
+    if latex_string.startswith("\\begin"):
         latex_template = "\\documentclass{article} \\usepackage{pgfplots} \\usepackage{amsmath} \\usepackage{array} \\pagestyle{empty} \\pgfplotsset{compat=newest} \\begin{document}\n" + latex_string + "\n" + "\\end{document}"
     else:
         latex_template = "\\documentclass{article} \\usepackage{pgfplots} \\usepackage{amsmath} \\usepackage{array} \\pagestyle{empty} \\pgfplotsset{compat=newest} \\begin{document}\n$" + latex_string + "$\n" + "\\end{document}"
