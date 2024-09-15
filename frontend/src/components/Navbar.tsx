@@ -1,9 +1,7 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import verbatex from "../assets/verbatex.png";
-import { logout } from "./Auth";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import Dropdown from "./Dropdown";
+import { auth } from "../firebase";
 
 type NavbarProps = {
   title: string;
@@ -11,28 +9,6 @@ type NavbarProps = {
 };
 
 const Navbar = ({ title, location }: NavbarProps) => {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout(navigate);
-      toast.success("Logged out successfully", {
-        autoClose: 1000,
-        hideProgressBar: true,
-        position: "bottom-left",
-      });
-
-      console.log("Logged out successfully");
-    } catch (error) {
-      toast.error("Logged out successfully", {
-        autoClose: 1000,
-        hideProgressBar: true,
-        position: "bottom-left",
-      });
-      console.error("Logout failed", error);
-    }
-  };
-
   return (
     <>
       <header className="fixed top-0 left-0 w-full flex justify-between items-center p-4 bg-white shadow-md z-20">
@@ -73,12 +49,7 @@ const Navbar = ({ title, location }: NavbarProps) => {
           >
             Favourites
           </Link>
-          <div
-            onClick={handleLogout}
-            className="flex p-2 px-6 border-2 border-green-700 bg-green-700 rounded-lg text-white cursor-pointer"
-          >
-            Log Out
-          </div>
+          <Dropdown email={auth.currentUser?.email}></Dropdown>
         </div>
       </header>
 
