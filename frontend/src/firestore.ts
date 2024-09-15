@@ -1,15 +1,15 @@
 import { db } from './firebase';
 import { collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
-// TODO optional field latex and image to be added
-export const saveEquation = async (userId: string, equation: string, liked: boolean, latex?: string, img?: string): Promise<string> => {
+export const saveEquation = async (userId: string, equation: string, liked: boolean, latex?: string, img?: string, functionType?: string): Promise<string> => {
     try {
         const collectionPath = liked ? `users/${userId}/favourites` : `users/${userId}/recents`;
         const docRef = await addDoc(collection(db, collectionPath), {
             equation,
             timestamp: new Date(),
             latex: latex || "",
-            img: img || "" 
+            img: img || "" ,
+            functionType: functionType || ""
         });
 
         console.log("Equation saved with ID:", docRef.id);
@@ -19,7 +19,6 @@ export const saveEquation = async (userId: string, equation: string, liked: bool
         throw error;
     }
 };
-
 
 export const updateEquationWithLatexAndImage = async (userId: string, equationId: string, latex: string, img: string) => {
     try {
@@ -32,7 +31,6 @@ export const updateEquationWithLatexAndImage = async (userId: string, equationId
   };
 
 
-// TODO add fetch field latex code and img
 export const fetchEquations = async (userId: string, liked: boolean) => {
   let collectionPath = `users/${userId}/recents`;
 
@@ -49,7 +47,9 @@ export const fetchEquations = async (userId: string, liked: boolean) => {
     return {
       id: doc.id,
       functionType: data.functionType || "Unknown",
-      function: data.equation || "Empty"
+      function: data.equation || "Empty",
+      latex: data.latex || null,
+      img: data.img || null
     };
   });
   console.log("Fetched equations:", equations);
@@ -74,10 +74,10 @@ export const removeFromRecents = async (userId: string, equationId: string) => {
   }
 };
 
-export const editEquation = async (userId: string, equationId: string, newEquation: string) => {
+export const editEquation = async (userId: string, equationId: string, functionType: string) => {
     try {
         const favouritesDocRef = doc(db, `users/${userId}/favourites`, equationId);
-        await updateDoc(favouritesDocRef, { equation: newEquation });
+        await updateDoc(favouritesDocRef, { functionType: functionType });
     
         console.log("Equation updated successfully");
     } catch (error) {

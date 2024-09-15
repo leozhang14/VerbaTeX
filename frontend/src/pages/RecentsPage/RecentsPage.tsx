@@ -21,10 +21,12 @@ const RecentsPage = () => {
       if (user) {
         try {
           const equations = await fetchEquations(user.uid, false);
-          const formattedRecents = equations.map((eq) => ({ // TODO add the other fields and send
+          const formattedRecents = equations.map((eq) => ({
             id: eq.id,
             text: eq.function,
-            liked: false
+            liked: false,
+            latex: eq.latex,
+            img: eq.img
           }));
           setRecents(formattedRecents);
 
