@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { login } from "./Auth";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showFields, setShowFields] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
     await login(email, password);
+    navigate("/record");
+    toast.success("Logged out successfully", {
+      autoClose: 1000,
+      hideProgressBar: true,
+    });
   };
 
   return (
