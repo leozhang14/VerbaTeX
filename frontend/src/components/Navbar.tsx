@@ -34,11 +34,12 @@ const Navbar = ({ title, location }: NavbarProps) => {
   return (
     <>
       <header className="fixed top-0 left-0 w-full flex justify-between items-center p-4 bg-white shadow-md z-20">
-        <div className="pl-4">
+        <div className="pl-4 cursor-pointer">
           <Link to={"/"}>
             <img src={verbatex} alt="Verbatex Logo" className="h-12" />
           </Link>
         </div>
+
         <div className="flex space-x-4 pr-4">
           <Link
             to={"/record"}
@@ -72,7 +73,7 @@ const Navbar = ({ title, location }: NavbarProps) => {
           </Link>
           <div
             onClick={handleLogout}
-            className="flex p-2 px-6 border-2 border-green-700 bg-green-700 rounded-lg text-white"
+            className="flex p-2 px-6 border-2 border-green-700 bg-green-700 rounded-lg text-white cursor-pointer"
           >
             Log Out
           </div>

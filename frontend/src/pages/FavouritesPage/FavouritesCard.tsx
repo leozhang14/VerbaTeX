@@ -53,15 +53,19 @@ const FavouritesCard = ({
         <div className="flex items-center">
           <div className="w-8">
             {isShowMore ? (
-              <FaChevronDown
-                className={`text-2xl`}
-                onClick={handleShowMore}
-              ></FaChevronDown>
+              <div className="cursor-pointer hover:scale-125">
+                <FaChevronDown
+                  className={`text-2xl`}
+                  onClick={handleShowMore}
+                ></FaChevronDown>
+              </div>
             ) : (
-              <FaChevronRight
-                className={`text-2xl`}
-                onClick={handleShowMore}
-              ></FaChevronRight>
+              <div className="cursor-pointer hover:scale-125">
+                <FaChevronRight
+                  className={`text-2xl`}
+                  onClick={handleShowMore}
+                ></FaChevronRight>
+              </div>
             )}
           </div>
           {!isEditting && <div className="text-xl">{functionType}</div>}
@@ -78,18 +82,23 @@ const FavouritesCard = ({
         </div>
         <div className="flex items-center space-x-4 text-xl">
           {isEditting ? (
-            <FaCheck
-              className="text-xl hover:text-green-700 hover:text-2xl"
-              onClick={handleSubmit}
-            ></FaCheck>
+            <div className="cursor-pointer hover:scale-125">
+              <FaCheck
+                className="text-xl hover:text-green-700 hover:text-2xl"
+                onClick={handleSubmit}
+              ></FaCheck>
+            </div>
           ) : (
-            <MdEdit
-              className="text-2xl"
-              onClick={() => setIsEditting(true)}
-            ></MdEdit>
+            <div className="cursor-pointer hover:scale-125">
+              <MdEdit
+                className="text-2xl"
+                onClick={() => setIsEditting(true)}
+              ></MdEdit>
+            </div>
           )}
-
-          <FaTrash></FaTrash>
+          <div className="cursor-pointer hover:scale-125">
+            <FaTrash></FaTrash>
+          </div>
         </div>
       </div>
       {isShowMore && (
@@ -102,10 +111,12 @@ const FavouritesCard = ({
             <div className="w-8"></div>
             <div>{favourite}</div>
           </div>
-          <IoCopySharp
-            className="text-xl min-w-6"
-            onClick={handleCopy}
-          ></IoCopySharp>
+          <div className="cursor-pointer hover:scale-125">
+            <IoCopySharp
+              className="text-xl min-w-6"
+              onClick={handleCopy}
+            ></IoCopySharp>
+          </div>
         </div>
       )}
     </div>
