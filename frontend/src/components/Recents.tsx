@@ -8,7 +8,7 @@ const Equations = () => {
   useEffect(() => {
     const loadEquations = async () => {
       if (auth.currentUser) {
-        const userEquations = await fetchEquations(auth.currentUser.uid);
+        const userEquations = await fetchEquations(auth.currentUser.uid, false);
         setEquations(userEquations);
       }
     };
@@ -17,7 +17,7 @@ const Equations = () => {
 
   return (
     <div>
-      <h2>Your Favorite Equations</h2>
+      <h2>Your Favourite Equations</h2>
       <ul>
         {equations.map((eq, index) => (
           <li key={index}>{eq.equation}</li>
