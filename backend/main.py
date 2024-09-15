@@ -93,7 +93,7 @@ def gpt_query():
         logger.info(latex_code)
         # Make a GET request to the /tex_png endpoint with LaTeX and user info
         response = requests.get(
-            'http://localhost:3001/tex_to_png',  # Change this if hosted differently
+            'https://leozhang14-backend--3001.prod1c.defang.dev/tex_to_png',  # Change this if hosted differently
             json={
                 'latex_string': latex_code,
                 'user_id': user_id,

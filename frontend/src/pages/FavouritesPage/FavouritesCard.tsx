@@ -91,15 +91,10 @@ const FavouritesCard = ({
     
     
     const popupWidth = window.innerWidth * 0.1;
-    const popupHeight = 150;
+    const popupHeight = 250;
 
     const top = clientY;
     const left = clientX;
-
-    setPopupPosition({ 
-      top: Math.min(top, window.innerHeight - popupHeight - 1000),
-      left: Math.min(left, window.innerWidth - popupWidth - 2000)
-    });
   };
 
   const handleMouseLeave = () => {
@@ -185,9 +180,9 @@ const FavouritesCard = ({
         <div
           className="absolute"
           style={{
-            top: `${popupPosition.top}px`,
-            left: `${popupPosition.left}px`,
-            width: "10vw",
+            top: `200px`,
+            left: `70px`,
+            width: "35vw",
             height: "auto",
             backgroundColor: "white",
             border: "1px solid #ccc",

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchEquationData = async ( text: string, user_id: string, instance_id: string) => {
   try {
-    const response = await axios.get('http://localhost:3001/gpt-query', {
+    const response = await axios.get('https://leozhang14-backend--3001.prod1c.defang.dev/gpt-query', {
         params: {
             text,
             user_id,
@@ -20,7 +20,7 @@ export const fetchEquationData = async ( text: string, user_id: string, instance
 
 export const fetchEdited = async (userId: string, equationId: string, text: string) => {
     try {
-      const response = await axios.get('http://localhost:3001/gpt-query', {
+      const response = await axios.get('https://leozhang14-backend--3001.prod1c.defang.dev/gpt-query', {
         params: {
           userId,
           equationId,
