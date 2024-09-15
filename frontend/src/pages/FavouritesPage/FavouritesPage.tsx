@@ -10,8 +10,8 @@ type Favourite = {
   favourite: string;
   id: string;
   liked: boolean;
-  latex_code?: string;
-  img_binary?: string;
+  latex: string;
+  img: string;
 };
 
 const FavouritesPage = () => {
@@ -19,16 +19,18 @@ const FavouritesPage = () => {
   const user = auth.currentUser;
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => { // TODO add thing to wait on getting latex and img and then passing to favourite card
+  useEffect(() => { 
     const getFavourites = async () => {
       if (user) {
         try {
           const fetchedFavourites = await fetchEquations(user.uid, true);
-          const formattedFavourites = fetchedFavourites.map((eq) => ({
+          const formattedFavourites = await fetchedFavourites.map((eq) => ({
             id: eq.id,
-            functionType: "enter title here...",
+            functionType: eq.function,
             favourite: eq.function,
             liked: true,
+            latex: eq.latex,
+            img: eq.img
           }));
           console.log(formattedFavourites);
           setFavourites(formattedFavourites);
@@ -61,6 +63,8 @@ const FavouritesPage = () => {
               favourite={fav.favourite}
               id={fav.id}
               onDelete={handleDelete}
+              latex={fav.latex}
+              img={fav.img}
             />
           ))}
           {favourites.length === 0 && (
