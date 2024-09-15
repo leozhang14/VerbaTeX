@@ -5,6 +5,7 @@ import { IoCopySharp } from "react-icons/io5";
 import { useState } from "react";
 import { auth } from "../../firebase";
 import { removeFromFavourites } from "../../firestore";
+import { FaCheck } from "react-icons/fa";
 
 type FavouritesCardProps = {
   functionType: string;
@@ -22,6 +23,17 @@ const FavouritesCard = ({
   onDelete
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
+  const [isEditting, setIsEditting] = useState(false);
+  const [formData, setFormData] = useState(functionType);
+
+  const handleSubmit = () => {
+    console.log(formData);
+    setIsEditting(false);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(event.target.value);
+  };
   const user = auth.currentUser;
 
   const handleCopy = () => {
@@ -79,10 +91,30 @@ const FavouritesCard = ({
               />
             )}
           </div>
-          <div className="text-xl">{functionType}</div>
+          {!isEditting && <div className="text-xl">{functionType}</div>}
+          {isEditting && (
+            <div>
+              <input
+                type="text"
+                value={formData}
+                onChange={handleChange}
+                className="p-1 px-2 outline-none border-2 border-green-900 rounded-lg text-lg"
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-4 text-xl">
-          <MdEdit className="text-2xl transform transition-transform duration-200 hover:scale-125" />
+            {isEditting ? (
+                <FaCheck
+                className="text-xl hover:text-green-700 hover:text-2xl transform transition-transform duration-200 hover:scale-125"
+                onClick={handleSubmit}
+                ></FaCheck>
+            ) : (
+                <MdEdit
+                className="text-2xl transform transition-transform duration-200 hover:scale-125"
+                onClick={() => setIsEditting(true)}
+                ></MdEdit>
+            )}
           <FaTrash
             className="text-2xl transform transition-transform duration-200 hover:scale-125"
             onClick={handleDelete}
