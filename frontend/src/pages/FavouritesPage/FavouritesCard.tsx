@@ -1,7 +1,5 @@
 import { toast } from "react-toastify";
-import { FaChevronRight } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronRight, FaChevronDown, FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoCopySharp } from "react-icons/io5";
 import { useState } from "react";
@@ -43,14 +41,14 @@ const FavouritesCard = ({
           <div className="w-8">
             {isShowMore ? (
               <FaChevronDown
-                className={`text-2xl`}
+                className={`text-2xl transform transition-transform duration-300`}
                 onClick={handleShowMore}
-              ></FaChevronDown>
+              />
             ) : (
               <FaChevronRight
-                className={`text-2xl`}
+                className={`text-2xl transform transition-transform duration-300 rotate-0`}
                 onClick={handleShowMore}
-              ></FaChevronRight>
+              />
             )}
           </div>
           <div className="text-xl">{functionType}</div>
@@ -60,7 +58,12 @@ const FavouritesCard = ({
           <FaTrash className="transform transition-transform duration-200 hover:scale-125" />
         </div>
       </div>
-      {isShowMore && (
+
+      <div
+        className={`transition-max-height duration-500 ease-in-out overflow-hidden ${
+          isShowMore ? "max-h-40" : "max-h-0"
+        }`}
+      >
         <div
           className={`flex justify-between pb-3 px-7 ${
             index % 2 === 0 ? "bg-green-50" : "bg-white"
@@ -70,9 +73,12 @@ const FavouritesCard = ({
             <div className="w-8"></div>
             <div>{favourite}</div>
           </div>
-          <IoCopySharp className="text-xl" onClick={handleCopy}></IoCopySharp>
+          <IoCopySharp
+            className="text-xl transform transition-transform duration-200 hover:scale-125"
+            onClick={handleCopy}
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 };
