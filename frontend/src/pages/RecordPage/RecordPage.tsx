@@ -10,9 +10,7 @@ import { useState } from "react";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
-
   const [latex, setLatex] = useState("");
-
   const handleOnClick = () => {
     if (isListening) {
       console.log(text);
