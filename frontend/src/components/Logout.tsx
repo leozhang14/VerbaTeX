@@ -1,10 +1,12 @@
 import React from 'react';
 import { logout } from './Auth';
+import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await logout();
+      await logout(navigate);
       console.log("Logged out successfully");
     } catch (error) {
       console.error("Logout failed", error);

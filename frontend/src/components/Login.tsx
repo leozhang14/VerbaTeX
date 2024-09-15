@@ -1,13 +1,18 @@
-import React, { useState } from "react";
-import { login } from "./Auth";
+import React, { useState } from 'react';
+import { login } from './Auth';
+import { useNavigate } from "react-router-dom";
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+import { auth } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showFields, setShowFields] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
-    await login(email, password);
+    await setPersistence(auth, browserLocalPersistence);
+    await login(email, password, navigate);
   };
 
   return (

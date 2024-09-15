@@ -1,22 +1,26 @@
 import { toast } from "react-toastify";
-import { FaChevronRight } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronRight, FaChevronDown, FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoCopySharp } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa";
 import { useState } from "react";
+import { auth } from "../../firebase";
+import { removeFromFavourites } from "../../firestore";
 
 type FavouritesCardProps = {
   functionType: string;
   favourite: string;
   index: number;
+  id: string;
+  onDelete: (id: string) => void;
 };
 
 const FavouritesCard = ({
   functionType,
   favourite,
   index,
+  id,
+  onDelete
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isEditting, setIsEditting] = useState(false);
@@ -32,6 +36,7 @@ const FavouritesCard = ({
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,
+      position: "bottom-left"
     });
   };
 
@@ -39,29 +44,46 @@ const FavouritesCard = ({
     setIsShowMore(!isShowMore);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(event.target.value);
+  const handleDelete = async () => {
+    if (user) {
+      try {
+        await removeFromFavourites(user.uid, id);
+        toast.success("Favourite deleted", {
+          autoClose: 1000,
+          hideProgressBar: true,
+          position: "bottom-left"
+        });
+        onDelete(id);
+      } catch (error) {
+        console.error("Error deleting favourite:", error);
+        toast.error("Failed to delete favourite", {
+          autoClose: 1000,
+          hideProgressBar: true,
+          position: "bottom-left"
+        });
+      }
+    }
   };
 
   return (
     <div className="flex flex-col">
       <div
         className={`flex justify-between p-5 px-7 ${
-          index % 2 === 0 ? "bg-green-50" : "bg-white"
+          index % 2 === 0 ? "bg-green-100" : "bg-white"
         }`}
       >
         <div className="flex items-center">
           <div className="w-8">
             {isShowMore ? (
               <FaChevronDown
-                className={`text-2xl`}
+                className="text-2xl transform transition-transform duration-300"
                 onClick={handleShowMore}
-              ></FaChevronDown>
+              />
             ) : (
               <FaChevronRight
-                className={`text-2xl`}
+                className="text-2xl transform transition-transform duration-300"
                 onClick={handleShowMore}
-              ></FaChevronRight>
+              />
             )}
           </div>
           {!isEditting && <div className="text-xl">{functionType}</div>}
@@ -92,10 +114,15 @@ const FavouritesCard = ({
           <FaTrash></FaTrash>
         </div>
       </div>
-      {isShowMore && (
+
+      <div
+        className={`transition-max-height duration-500 ease-in-out overflow-hidden ${
+          isShowMore ? "max-h-40" : "max-h-0"
+        }`}
+      >
         <div
-          className={`flex justify-between pb-3 px-7 ${
-            index % 2 === 0 ? "bg-green-50" : "bg-white"
+          className={`flex justify-between pb-5 px-7 ${
+            index % 2 === 0 ? "bg-green-100" : "bg-white"
           }`}
         >
           <div className="flex items-center">
@@ -103,11 +130,11 @@ const FavouritesCard = ({
             <div>{favourite}</div>
           </div>
           <IoCopySharp
-            className="text-xl min-w-6"
+            className="text-xl transform transition-transform duration-200 hover:scale-125"
             onClick={handleCopy}
-          ></IoCopySharp>
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { signUp } from './Auth';
 import { useNavigate } from "react-router-dom";
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+import { auth } from '../firebase';
 import './slide.css';
 
 const SignUp = () => {
@@ -11,6 +13,7 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await signUp(email, password, navigate);
       console.log("Signed up successfully");
     } catch (error) {

@@ -31,12 +31,14 @@ const RecordPage = () => {
         toast.success("Text has been submitted", {
           autoClose: 2000,
           hideProgressBar: true,
+          position: "bottom-left"
         });
         setText("");
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
           hideProgressBar: true,
+          position: "bottom-left"
         });
       }
     } catch (error) {
@@ -44,6 +46,7 @@ const RecordPage = () => {
       toast.error("Error submitting text", {
         autoClose: 2000,
         hideProgressBar: true,
+        position: "bottom-left"
       });
     }
   };
