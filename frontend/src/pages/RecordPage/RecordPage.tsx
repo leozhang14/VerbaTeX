@@ -17,7 +17,7 @@ const RecordPage = () => {
     useSpeechRecognition();
   //   const [equationId, setEquationId] = useState<string | null>(null);
   const [latex, setLatex] = useState("");
-  const [img, setImg] = useState();
+  const [img, setImg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCopy = (s: string) => {
@@ -56,6 +56,7 @@ const RecordPage = () => {
     } else {
       setText("");
       setLatex("");
+      setImg("");
       setIsLoading(false);
       startListening();
     }
@@ -72,21 +73,25 @@ const RecordPage = () => {
       if (user) {
         const newEquationId = await saveEquation(user.uid, text, false);
         toast.success("Text has been submitted", {
-            autoClose: 2000,
-            hideProgressBar: true,
-            position: "bottom-left"
+          autoClose: 2000,
+          hideProgressBar: true,
+          position: "bottom-left",
         });
-        
+
         const result = await fetchEquationData(text, user.uid, newEquationId);
-        console.log('Fetched LaTeX and image:', result);
-  
+        console.log("Fetched LaTeX and image:", result);
+
         setLatex(result.latex_code);
         setImg(result.img_base64);
-  
-        await updateEquationWithLatexAndImage(user.uid, newEquationId, result.latex_code, result.img_base64);
-  
+
+        await updateEquationWithLatexAndImage(
+          user.uid,
+          newEquationId,
+          result.latex_code,
+          result.img_base64
+        );
+
         setText("");
-  
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
