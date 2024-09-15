@@ -8,12 +8,12 @@ type RecentsCardsProps = {
   text: string;
   liked: boolean;
   index: number;
-//   latex_code?: string;
-//   img_binary?: string;
+  latex?: string;
+  img?: string;
 };
 
 const RecentsCard = ({ text, liked, index, 
-    // latex_code, img_binary 
+    latex, img 
 }: RecentsCardsProps) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
@@ -33,7 +33,7 @@ const RecentsCard = ({ text, liked, index,
     const userId = user.uid;
 
     try {
-      await saveEquation(userId, text, true); // TODO also find all implementations of fns that have been added and fix after
+      await saveEquation(userId, text, true, latex, img); // TODO also find all implementations of fns that have been added and fix after
       toast.success("Added to favourites", { autoClose: 1000, hideProgressBar: true, position: "bottom-left" });
     } catch (error) {
       console.error("Error saving to favourites:", error);
@@ -47,7 +47,7 @@ const RecentsCard = ({ text, liked, index,
         index % 2 === 0 ? "bg-green-50" : "bg-white"
       }`}
     >
-      <div>{text}</div> TODO replace with latex and on hover show image if there
+      <div>{latex}</div> 
       <div className="flex items-center space-x-4 text-xl">
       <FaHeart 
         onClick={handleLike} 

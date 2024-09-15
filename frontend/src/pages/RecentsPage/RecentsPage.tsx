@@ -7,8 +7,8 @@ import { fetchEquations } from "../../firestore";
 type Recent = {
   text: string;
   liked: boolean;
-  latex_code?: string;
-  img_binary?: string;
+  latex?: string;
+  img?: string;
 };
 
 const RecentsPage = () => {
@@ -55,6 +55,8 @@ const RecentsPage = () => {
               text={recent.text}
               liked={recent.liked}
               index={index}
+              latex={recent.latex}
+              img={recent.img}
             /> // pass in proper fields
           ))}
         </div>

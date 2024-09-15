@@ -2,25 +2,32 @@ import { db } from './firebase';
 import { collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
 // TODO optional field latex and image to be added
-export const saveEquation = async (userId: string, equation: string, liked: boolean): Promise<string> => {
+export const saveEquation = async (userId: string, equation: string, liked: boolean, latex?: string, img?: string): Promise<string> => {
     try {
-        let docRef;
-        if (liked) {
-            docRef = await addDoc(collection(db, `users/${userId}/favourites`), {
-                equation,
-                timestamp: new Date(),
-            });
-        } else {
-            docRef = await addDoc(collection(db, `users/${userId}/recents`), {
-                equation,
-                timestamp: new Date(),
-            });
-        }
+        const collectionPath = liked ? `users/${userId}/favourites` : `users/${userId}/recents`;
+        const docRef = await addDoc(collection(db, collectionPath), {
+            equation,
+            timestamp: new Date(),
+            latex: latex || "",
+            img: img || "" 
+        });
+
         console.log("Equation saved with ID:", docRef.id);
         return docRef.id;
     } catch (error) {
         console.error("Error saving equation:", error);
         throw error;
+    }
+};
+
+
+export const updateEquationWithLatexAndImage = async (userId: string, equationId: string, latex: string, img: string) => {
+    try {
+        const equationRef = doc(db, `users/${userId}/recents/${equationId}`);
+        await updateDoc(equationRef, { latex, img });
+        console.log("Equation updated with LaTeX and image");
+    } catch (error) {
+        console.error("Error updating equation with LaTeX and image:", error);
     }
   };
 

@@ -8,6 +8,7 @@ import { auth } from '../../firebase';
 import { saveEquation } from "../../firestore";
 import { useState } from "react";
 import { fetchEquationData } from '../../equationService'
+import { updateEquationWithLatexAndImage } from "../../firestore";
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
@@ -55,23 +56,21 @@ const RecordPage = () => {
       const user = auth.currentUser;
       if (user) {
         const newEquationId = await saveEquation(user.uid, text, false);
-        // setEquationId(newEquationId);
-
         toast.success("Text has been submitted", {
-          autoClose: 2000,
-          hideProgressBar: true,
-          position: "bottom-left"
+            autoClose: 2000,
+            hideProgressBar: true,
+            position: "bottom-left"
         });
-        setText("");
+        
+        const result = await fetchEquationData(text, user.uid, newEquationId);
+        console.log('Fetched LaTeX and image:', result);
   
-        if (newEquationId) {
-            const result = await fetchEquationData(text, user.uid, newEquationId); 
-            console.log('result:', result);
-            
-            setLatex(result.latex_code);
-            setImg(result.img_base64);
-            
-        }
+        setLatex(result.latex_code);
+        setImg(result.img_base64);
+  
+        await updateEquationWithLatexAndImage(user.uid, newEquationId, result.latex_code, result.img_base64);
+  
+        setText("");
   
       } else {
         toast.error("User not authenticated", {
@@ -81,7 +80,7 @@ const RecordPage = () => {
         });
       }
     } catch (error) {
-      console.error("Error saving equation:", error);
+      console.error("Error submitting equation:", error);
       toast.error("Error submitting text", {
         autoClose: 2000,
         hideProgressBar: true,
@@ -89,6 +88,7 @@ const RecordPage = () => {
       });
     }
   };
+  
   
 
   return (
