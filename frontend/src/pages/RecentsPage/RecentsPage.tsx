@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import RecentsCard from "./RecentsCard";
-import { auth } from '../../firebase'; 
+import { auth } from "../../firebase";
 import { fetchEquations } from "../../firestore";
 
 type Recent = {
@@ -12,8 +12,8 @@ type Recent = {
 };
 
 const RecentsPage = () => {
-  const [recents, setRecents] = useState<Recent[]>([]); 
-  const [loading, setLoading] = useState<boolean>(true); 
+  const [recents, setRecents] = useState<Recent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getRecents = async () => {
@@ -41,7 +41,7 @@ const RecentsPage = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -58,6 +58,11 @@ const RecentsPage = () => {
             /> // pass in proper fields
           ))}
         </div>
+        {recents.length === 0 && (
+          <div className="flex justify-center text-xl italic">
+            Uh oh, this is empty!
+          </div>
+        )}
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ const FavouritesPage = () => {
             favourite: eq.function,
             liked: true
           }));
+          console.log(formattedFavourites);
           setFavourites(formattedFavourites);
         } catch (error) {
           console.error("Error fetching favourites:", error);
@@ -46,7 +47,7 @@ const FavouritesPage = () => {
     <div>
       <Navbar title="Favourite commands" location="favourites" />
       <div className="container mx-auto p-5 flex flex-col items-center">
-        <div className="w-1/2 flex flex-col">
+        <div className="w-1/2 flex flex-col items">
           {favourites.map((fav, index) => (
             <FavouritesCard
               key={fav.id}
@@ -57,6 +58,11 @@ const FavouritesPage = () => {
               onDelete={handleDelete}
             />
           ))}
+          {favourites.length === 0 && (
+            <div className="flex justify-center text-xl italic">
+              Uh oh, this is empty!
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -64,4 +70,3 @@ const FavouritesPage = () => {
 };
 
 export default FavouritesPage;
-

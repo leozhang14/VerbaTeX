@@ -40,6 +40,8 @@ const RecordPage = () => {
       console.log(text);
       stopListening();
     } else {
+      setText("")
+      setLatex("")
       startListening();
     }
   };

@@ -1,14 +1,45 @@
 import os
 import json
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import openai
 import logging
 import subprocess
 import boto3
 from flask_cors import CORS
+from num2words import num2words
+import re
+import base64
+import requests
+
+def convert_to_words(input_string):
+    # Define a dictionary to map symbols to words
+    symbol_map = {
+        '/': 'divided by',
+        '*': 'times',
+        '=': 'equals',
+        '+': 'plus',
+        '-': 'minus',
+        '^': 'to the power of'
+    }
+
+    # Replace symbols in the string
+    for symbol, word in symbol_map.items():
+        input_string = input_string.replace(symbol, word)
+    
+    # Function to convert numbers to their word form
+    def replace_number(match):
+        number = match.group(0)
+        return num2words(int(number))
+
+    # Use regex to find all numbers and replace them with words
+    output_string = re.sub(r'\d+', replace_number, input_string)
+
+    return output_string
 
 app = Flask(__name__)
+
+CORS(app)
 
 CORS(app)
 
@@ -36,20 +67,19 @@ logger = logging.getLogger(__name__)
 
 @app.route("/")
 def index():
-    return { 'status' : 'ok' }, 200
+    return "We love Hack the North!!!"
 
 @app.route('/gpt-query', methods=['GET'])
 def gpt_query():
     # Get the query from the URL parameters
-    query = "Draw a three dimensional surface plot of z equals x squared plus abs of four natural log of abs y."
-    user_id = "LeoZ"
-    instance_id = "001"
+    query = convert_to_words(request.args.get('text'))
+    user_id = request.args.get('user_id')
+    instance_id = request.args.get('instance_id')
     # Access the OPENAI_KEY environment variable
     openai_key = os.getenv("OPENAI_KEY")
 
-    if not query:
+    if not query or not user_id or not instance_id:
         return jsonify({'error': 'Query parameter is missing'}), 400
-    
     try:
         client = openai.OpenAI(api_key=openai_key)
         completion = client.chat.completions.create(
@@ -59,18 +89,35 @@ def gpt_query():
                 {"role": "user", "content": query}
             ]
         )
-
-        response = completion.choices[0].message.content
-        # Return the message
-        logger.info(response)
-        tex_to_png(response, user_id, instance_id)
-        return jsonify({'response': response})
-    
+        latex_code = completion.choices[0].message.content
+        logger.info(latex_code)
+        # Make a POST request to the /tex_png endpoint with LaTeX and user info
+        response = requests.post(
+            'http://localhost:3001/tex_to_png',  # Change this if hosted differently
+            json={
+                'latex_string': latex_code,
+                'user_id': user_id,
+                'instance_id': instance_id
+            }
+        )
+        # Handle the response from /tex_png
+        if response.status_code == 200:
+            img_base64 = response.json().get('img_base64')
+            logger.info(img_base64)
+            return jsonify({
+                'latex_code': latex_code,
+                'img_base64': img_base64
+            })
+        else:
+            return jsonify({'error': 'Failed to generate PNG'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/tex_png', methods=[])
-def tex_to_png(latex_string, user_id, instance_id):
+@app.route('/tex_png', methods=['POST'])
+def tex_to_png():
+    latex_string = request.args.get('latex')
+    user_id = request.args.get('user_id')
+    instance_id = request.args.get('instance_id')
     if not latex_string:
         return jsonify({"error": "No LaTeX string provided"}), 400
     png_name = f'{user_id}_{instance_id}.png'
@@ -106,16 +153,24 @@ def tex_to_png(latex_string, user_id, instance_id):
 
     # Upload the PNG to S3 with the user_id and instance_id as part of the object key
     try:
-        with open('output/LeoZ_001.png', 'rb') as png_file:
+        with open(f'output/{png_name}', 'rb') as png_file:
             s3_client.upload_fileobj(
                 png_file, 
                 S3_BUCKET_NAME, 
                 png_name
             )
-        print(f"Uploaded {png_file_path} to S3 as {png_name}")
+        logger.info(f"Uploaded {png_file_path} to S3 as {png_name}")
     except Exception as e:
         logging.error(e)
         return jsonify({"error": f"Failed to upload to S3: {str(e)}"}), 500
+    
+    try:
+        with open(f'output/{png_name}', 'rb') as png_file:
+            png_binary = png_file.read()
+        logger.info(f"Saved image binary.")
+    except Exception as e:
+        logging.error(e)
+        return jsonify({"error": f"Failed to save image binary: {str(e)}"}), 500
 
     # Clean up intermediate files
     try:
@@ -127,15 +182,16 @@ def tex_to_png(latex_string, user_id, instance_id):
     except FileNotFoundError as e:
         print(f"File not found: {e}")
     
-    return jsonify({"message": f"PNG image saved at {png_file_path}"}), 200
+    # Convert binary image data to Base64 string
+    img_base64 = base64.b64encode(png_binary).decode('utf-8')
+
+    logger.info("Tex_to_PNG full success!")
+    return jsonify({'img_base64': img_base64}), 200
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    """
-    Endpoint to delete PNG from S3 based on user_id and instance_id
-    """
-    user_id = "LeoZ"
-    instance_id = "001"
+    user_id = request.args.get('user_id')
+    instance_id = request.args.get('instance_id')
 
     if not user_id or not instance_id:
         return jsonify({"error": "No user ID or instance ID provided"}), 400

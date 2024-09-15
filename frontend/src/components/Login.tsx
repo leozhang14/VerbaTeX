@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { login } from './Auth';
+import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { login } from "./Auth";
 import { useNavigate } from "react-router-dom";
 import { setPersistence, browserLocalPersistence } from "firebase/auth";
-import { auth } from '../firebase';
+import { auth } from "../firebase";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,11 @@ const Login = () => {
   const handleLogin = async () => {
     await setPersistence(auth, browserLocalPersistence);
     await login(email, password, navigate);
+    toast.success("Logged out successfully", {
+      autoClose: 1000,
+      hideProgressBar: true,
+      position: "bottom-left",
+    });
   };
 
   return (
