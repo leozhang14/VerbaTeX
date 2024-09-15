@@ -52,12 +52,13 @@ const Navbar = ({ title, location }: NavbarProps) => {
           <Dropdown email={auth.currentUser?.email}></Dropdown>
         </div>
       </header>
-
-      <div className="pt-20">
-        <div className="flex justify-center mt-16 text-3xl bg-white p-4">
-          {title}
+      {!(location === "home") && (
+        <div className="pt-20">
+          <div className="flex justify-center mt-16 text-3xl bg-white p-4">
+            {title}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
