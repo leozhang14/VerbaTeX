@@ -2,3 +2,5 @@
 node_modules
 build
 .venv
+backend/output
+.DS_Store

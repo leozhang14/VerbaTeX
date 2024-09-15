@@ -8,6 +8,10 @@ services:
     environment:
       - AWS_ACCESS_KEY
       - AWS_SECRET_KEY
+    volumes:
+      - ./backend/output:/backend/output
+    stdin_open: true
+    tty: true
   frontend:
     build:
       context: frontend
