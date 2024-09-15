@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { login } from './Auth';
+import React, { useState } from "react";
+import { login } from "./Auth";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showFields, setShowFields] = useState(false);
 
   const handleLogin = async () => {
@@ -12,15 +12,19 @@ const Login = () => {
 
   return (
     <div className="relative flex items-center justify-end p-2">
-      <button 
-        onClick={showFields ? handleLogin : () => setShowFields(!showFields)} 
+      <button
+        onClick={showFields ? handleLogin : () => setShowFields(!showFields)}
         className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 absolute top-2 right-4 z-10"
       >
         Log In
       </button>
 
-      <div 
-        className={`flex space-x-4 transform transition-transform duration-500 ease-in-out ${showFields ? 'translate-x-[-125px] opacity-100' : 'translate-x-full opacity-0'}`}
+      <div
+        className={`flex space-x-4 transform transition-transform duration-500 ease-in-out ${
+          showFields
+            ? "translate-x-[-125px] opacity-100"
+            : "translate-x-full opacity-0"
+        }`}
       >
         <input
           type="email"
