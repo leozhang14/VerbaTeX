@@ -4,6 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoCopySharp } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa";
 import { useState } from "react";
 
 type FavouritesCardProps = {
@@ -18,6 +19,13 @@ const FavouritesCard = ({
   index,
 }: FavouritesCardProps) => {
   const [isShowMore, setIsShowMore] = useState(false);
+  const [isEditting, setIsEditting] = useState(false);
+  const [formData, setFormData] = useState(functionType);
+
+  const handleSubmit = () => {
+    console.log(formData);
+    setIsEditting(false);
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(favourite);
@@ -29,6 +37,10 @@ const FavouritesCard = ({
 
   const handleShowMore = () => {
     setIsShowMore(!isShowMore);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(event.target.value);
   };
 
   return (
@@ -52,10 +64,31 @@ const FavouritesCard = ({
               ></FaChevronRight>
             )}
           </div>
-          <div className="text-xl">{functionType}</div>
+          {!isEditting && <div className="text-xl">{functionType}</div>}
+          {isEditting && (
+            <div>
+              <input
+                type="text"
+                value={formData}
+                onChange={handleChange}
+                className="p-1 px-2 outline-none border-2 border-green-900 rounded-lg text-lg"
+              ></input>
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-4 text-xl">
-          <MdEdit className="text-2xl"></MdEdit>
+          {isEditting ? (
+            <FaCheck
+              className="text-xl hover:text-green-700 hover:text-2xl"
+              onClick={handleSubmit}
+            ></FaCheck>
+          ) : (
+            <MdEdit
+              className="text-2xl"
+              onClick={() => setIsEditting(true)}
+            ></MdEdit>
+          )}
+
           <FaTrash></FaTrash>
         </div>
       </div>
