@@ -45,8 +45,14 @@ const RecentsCard = ({ text, liked, index }: RecentsCardsProps) => {
     >
       <div>{text}</div>
       <div className="flex items-center space-x-4 text-xl">
-        <FaHeart onClick={handleLike} className={liked ? "text-red-600" : ""} />
-        <IoCopySharp onClick={handleCopy} />
+      <FaHeart 
+        onClick={handleLike} 
+        className={`transform transition-transform duration-200 hover:scale-125 ${liked ? "text-red-600" : ""}`}
+      />
+      <IoCopySharp 
+        onClick={handleCopy} 
+        className="transform transition-transform duration-200 hover:scale-125" 
+      />
       </div>
     </div>
   );

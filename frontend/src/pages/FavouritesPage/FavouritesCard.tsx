@@ -56,8 +56,8 @@ const FavouritesCard = ({
           <div className="text-xl">{functionType}</div>
         </div>
         <div className="flex items-center space-x-4 text-xl">
-          <MdEdit className="text-2xl"></MdEdit>
-          <FaTrash></FaTrash>
+          <MdEdit className="text-2xl transform transition-transform duration-200 hover:scale-125" />
+          <FaTrash className="transform transition-transform duration-200 hover:scale-125" />
         </div>
       </div>
       {isShowMore && (
