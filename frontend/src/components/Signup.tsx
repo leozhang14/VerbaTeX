@@ -3,9 +3,8 @@ import { signUp } from "./Auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setPersistence, browserLocalPersistence } from "firebase/auth";
-import { auth } from '../firebase';
-import './slide.css';
-
+import { auth } from "../firebase";
+import "./slide.css";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -21,14 +20,14 @@ const SignUp = () => {
       toast.success("Signed up successfully", {
         autoClose: 1000,
         hideProgressBar: true,
-        position: "bottom-left"
+        position: "bottom-left",
       });
       console.log("Signed up successfully");
     } catch (error) {
       toast.error("Signed up failed", {
         autoClose: 1000,
         hideProgressBar: true,
-        position: "bottom-left"
+        position: "bottom-left",
       });
       console.error("Sign up failed", error);
     }
@@ -38,7 +37,7 @@ const SignUp = () => {
     <div className="relative flex items-center justify-end p-2">
       <button
         onClick={showFields ? handleSignUp : () => setShowFields(!showFields)}
-        className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 absolute top-2 right-4 z-10"
+        className="bg-green-600 text-white rounded px-4 py-2 transition-all duration-500 absolute top-2 right-4 z-10 w-32"
       >
         {showFields ? "Sign Up" : "Get Started"}
       </button>
@@ -46,7 +45,7 @@ const SignUp = () => {
       <div
         className={`flex space-x-4 transform transition-transform duration-500 ease-in-out ${
           showFields
-            ? "translate-x-[-125px] opacity-100"
+            ? "translate-x-[-150px] opacity-100"
             : "translate-x-full opacity-0"
         }`}
       >
