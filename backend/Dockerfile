@@ -5,7 +5,26 @@ FROM python:3.11.4
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    wget \
+    apt-transport-https \
+    gnupg \
+    ca-certificates
+
+RUN apt-get update && apt-get install -y \
+    texlive-latex-base \
+    texlive-fonts-recommended \
+    texlive-pictures \
+    texlive-science \
+    python3-pip \
+    build-essential
+
+RUN apt-get update && apt-get install -y \
+    texlive-latex-extra \
+    poppler-utils \
+    texlive-extra-utils
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Set the working directory in the container
 WORKDIR /backend

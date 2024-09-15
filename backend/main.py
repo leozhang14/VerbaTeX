@@ -1,18 +1,24 @@
 import os
 import json
-import boto3
-from botocore.exceptions import ClientError
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import openai
+import logging
+import subprocess
 
 app = Flask(__name__)
 
+# Ensure the output folder exists
+output_folder = '/backend/output'
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 REGION_NAME = 'us-west-2'
 BUCKET_NAME = 'my-sample-bucket'
 FILE_NAME   = 'file1.json'
-
 
 @app.route("/")
 def index():
@@ -21,7 +27,7 @@ def index():
 @app.route('/gpt-query', methods=['GET'])
 def gpt_query():
     # Get the query from the URL parameters
-    query = "For all x in the natural numbers, x is greater than zero by the standard domain of natural numbers."
+    query = "Draw a three dimensional surface plot of z equals x squared plus abs of four natural log of abs y."
     # Load environment variables from the .env file
     load_dotenv()
 
@@ -43,54 +49,66 @@ def gpt_query():
 
         response = completion.choices[0].message.content
         # Return the message
+        logger.info(response)
+        tex_to_png(response)
         return jsonify({'response': response})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route("/transcribe", methods=['POST'])
-def upload():
-    # Check that the post body is valid JSON
-    if not request.is_json:
-        return { 'error': 'Invalid JSON' }, 400
+@app.route('/tex_png', methods=[])
+def tex_to_png(latex_string : str):
+    if not latex_string:
+        return jsonify({"error": "No LaTeX string provided"}), 400
+    
+    # Define the file paths within the output folder
+    tex_file_path = os.path.join(output_folder, 'output.tex')
+    pdf_file_path = os.path.join(output_folder, 'output.pdf')
+    cropped_pdf_file_path = os.path.join(output_folder, 'output-cropped.pdf')
+    png_file_path = os.path.join(output_folder, 'output_image.png')
+    
+    # Create the LaTeX file content with the received string
+    latex_template = """
+    \\documentclass{article}
+    \\usepackage{pgfplots}
+    \\usepackage{amsmath}
+    \\usepackage{array}
+    \\pagestyle{empty}
+    \\pgfplotsset{compat=newest}
+    \\begin{document}\n""" + latex_string + "\n" + "\\end{document}"
 
-    # Parse the JSON into a Python dictionary
-    data = request.get_json()
+    logger.info(latex_template)
+    # Write the LaTeX content to a file named 'output.tex'
+    with open('output/output.tex', 'w') as tex_file:
+        tex_file.write(latex_template)
+    
+    # Verify if output.tex was created
+    if not os.path.exists('output/output.tex'):
+        logger.info("BIG ERROR")
+    
+    logger.info("here")
 
-    AWS_ACCESS_KEY=os.environ['AWS_ACCESS_KEY']
-    AWS_SECRET_KEY=os.environ['AWS_SECRET_KEY']
+    # Compile the LaTeX file into a PDF using pdflatex
+    subprocess.run(['pdflatex', '-output-directory', output_folder, tex_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # Write the JSON to S3
-    s3 = boto3.client('s3', region_name=REGION_NAME, aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
-
-    with open(FILE_NAME, 'w') as f:
-        json.dump(data, f)
-
-    s3.upload_file(FILE_NAME, BUCKET_NAME, FILE_NAME)
-
-    return { 'status': 'ok' }, 200
-
-
-@app.route("/download", methods=['GET'])
-def download():
-    AWS_ACCESS_KEY=os.environ['AWS_ACCESS_KEY']
-    AWS_SECRET_KEY=os.environ['AWS_SECRET_KEY']
-
-    # Write the JSON to S3
-    s3 = boto3.client('s3', region_name=REGION_NAME, aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
-
+    logger.info("done latex")
+    # Crop the generated PDF to the size of the content using pdfcrop
+    subprocess.run(['pdfcrop', '--margins', '10', pdf_file_path, cropped_pdf_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    logger.info("done crop")
+    # Convert the cropped PDF to a PNG image using pdftoppm (Poppler utility)
+    subprocess.run(['pdftoppm', '-r', '150', cropped_pdf_file_path, '-png', '-singlefile', png_file_path[:-4]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    logger.info("done png")
+    # Clean up intermediate files
     try:
-        file_object = s3.get_object(Bucket=BUCKET_NAME, Key=FILE_NAME)
-        # Read the Body stream of the S3 object and load the JSON
-        file_content = json.load(file_object['Body'])
-
-        return file_content, 200
-    except ClientError as e:
-        error_code = int(e.response['Error']['Code'])
-        if error_code == 404:
-            return { 'error': 'File not found in S3 bucket' }, 404
-        else:
-            return { 'error': 'Unknown error' }, 500
+        os.remove(tex_file_path)
+        os.remove(pdf_file_path)
+        os.remove(cropped_pdf_file_path)
+        os.remove(os.path.join(output_folder, 'output.log'))
+        os.remove(os.path.join(output_folder, 'output.aux'))
+    except FileNotFoundError as e:
+        print(f"File not found: {e}")
+    
+    return jsonify({"message": f"PNG image saved at {png_file_path}"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3001)
