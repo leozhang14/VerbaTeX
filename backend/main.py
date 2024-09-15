@@ -9,6 +9,8 @@ import boto3
 from flask_cors import CORS
 from num2words import num2words
 import re
+from io import BytesIO
+import base64
 
 def convert_to_words(input_string):
     # Define a dictionary to map symbols to words
@@ -63,7 +65,7 @@ logger = logging.getLogger(__name__)
 
 @app.route("/")
 def index():
-    return { 'status' : 'ok' }, 200
+    return "We love Hack the North!!!"
 
 @app.route('/gpt-query', methods=['GET'])
 def gpt_query():
@@ -90,8 +92,20 @@ def gpt_query():
         response = completion.choices[0].message.content
         # Return the message
         logger.info(response)
-        tex_to_png(response, user_id, instance_id)
-        return jsonify({'response': response})
+        # Convert LaTeX to PNG (tex_to_png should return binary data)
+        img_binary = tex_to_png(response, user_id, instance_id)
+
+        # Convert binary image data to Base64 string
+        img_base64 = base64.b64encode(img_binary).decode('utf-8')
+
+        logger.info(response)
+        logger.info(img_base64)
+
+        # Return both LaTeX code and the image in Base64 format
+        return jsonify({
+            'latex_code': response,
+            'img_binary': img_base64
+        })
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -139,10 +153,18 @@ def tex_to_png(latex_string, user_id, instance_id):
                 S3_BUCKET_NAME, 
                 png_name
             )
-        print(f"Uploaded {png_file_path} to S3 as {png_name}")
+        logger.info(f"Uploaded {png_file_path} to S3 as {png_name}")
     except Exception as e:
         logging.error(e)
         return jsonify({"error": f"Failed to upload to S3: {str(e)}"}), 500
+    
+    try:
+        with open('output/LeoZ_001.png', 'rb') as png_file:
+            png_binary = png_file.read()
+        logger.info(f"Saved image binary.")
+    except Exception as e:
+        logging.error(e)
+        return jsonify({"error": f"Failed to save image binary: {str(e)}"}), 500
 
     # Clean up intermediate files
     try:
@@ -154,7 +176,8 @@ def tex_to_png(latex_string, user_id, instance_id):
     except FileNotFoundError as e:
         print(f"File not found: {e}")
     
-    return jsonify({"message": f"PNG image saved at {png_file_path}"}), 200
+    logger.info("Tex_to_PNG full success!")
+    return png_binary
 
 @app.route('/delete', methods=['POST'])
 def delete():

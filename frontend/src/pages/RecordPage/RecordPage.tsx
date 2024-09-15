@@ -9,11 +9,8 @@ import { saveEquation } from "../../firestore";
 import { useState } from "react";
 
 const RecordPage = () => {
-  const { text, startListening, stopListening, isListening, setText } =
-    useSpeechRecognition();
-
+  const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
   const [latex, setLatex] = useState("");
-
   const handleOnClick = () => {
     if (isListening) {
       console.log(text);
@@ -39,26 +36,6 @@ const RecordPage = () => {
           hideProgressBar: true,
           position: "bottom-left",
         });
-        try {
-          // Make the GET request to the backend endpoint, passing the parameter in the query string
-          const response = await fetch(
-            `http://localhost:3001/gpt-query?text=${encodeURIComponent(text)}`,
-            {
-              method: "GET",
-            }
-          );
-          // Check if the response is ok
-          if (response.ok) {
-            // Parse the JSON response
-            const data = await response.json();
-            console.log(data);
-            setLatex(data.response);
-          } else {
-            console.error("Failed to fetch from backend");
-          }
-        } catch (error) {
-          console.error("Error occurred while fetching:", error);
-        }
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,
