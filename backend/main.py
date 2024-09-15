@@ -91,8 +91,8 @@ def gpt_query():
         )
         latex_code = completion.choices[0].message.content
         logger.info(latex_code)
-        # Make a POST request to the /tex_png endpoint with LaTeX and user info
-        response = requests.post(
+        # Make a GET request to the /tex_png endpoint with LaTeX and user info
+        response = requests.get(
             'http://localhost:3001/tex_to_png',  # Change this if hosted differently
             json={
                 'latex_string': latex_code,
@@ -113,11 +113,14 @@ def gpt_query():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/tex_png', methods=['POST'])
+@app.route('/tex_to_png', methods=['GET'])
 def tex_to_png():
-    latex_string = request.args.get('latex')
-    user_id = request.args.get('user_id')
-    instance_id = request.args.get('instance_id')
+    latex_string = request.json.get('latex_string')
+    user_id = request.json.get('user_id')
+    instance_id = request.json.get('instance_id')
+    logger.info(latex_string)
+    logger.info(user_id)
+    logger.info(instance_id)
     if not latex_string:
         return jsonify({"error": "No LaTeX string provided"}), 400
     png_name = f'{user_id}_{instance_id}.png'

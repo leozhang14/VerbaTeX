@@ -11,7 +11,7 @@ import { fetchEquationData } from '../../equationService'
 
 const RecordPage = () => {
   const { text, startListening, stopListening, isListening, setText } = useSpeechRecognition();
-  const [equationId, setEquationId] = useState<string | null>(null);
+//   const [equationId, setEquationId] = useState<string | null>(null);
   const [latex, setLatex] = useState();
   const [img, setImg] = useState();
   
@@ -41,7 +41,7 @@ const RecordPage = () => {
       stopListening();
     } else {
       setText("")
-      setLatex("")
+    //   setLatex("")
       startListening();
     }
   };
@@ -55,7 +55,7 @@ const RecordPage = () => {
       const user = auth.currentUser;
       if (user) {
         const newEquationId = await saveEquation(user.uid, text, false);
-        setEquationId(newEquationId);
+        // setEquationId(newEquationId);
 
         toast.success("Text has been submitted", {
           autoClose: 2000,
@@ -64,10 +64,13 @@ const RecordPage = () => {
         });
         setText("");
   
-        if (equationId) {
-            const result = await fetchEquationData(text, user.uid, equationId); 
+        if (newEquationId) {
+            const result = await fetchEquationData(text, user.uid, newEquationId); 
+            console.log('result:', result);
+            
             setLatex(result.latex_code);
             setImg(result.img_binary);
+            
         }
   
       } else {
@@ -128,9 +131,12 @@ const RecordPage = () => {
             value={latex || ''}
             readOnly
         />
-        {img && (
-            <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
-        )}
+        <img src={`data:image/png;base64,${img}`} alt="Equation Preview" className="mt-4" />
+        {img ? 
+            <img src={`data:image/png;charset=utf-8;base64,${img}`} alt="Equation Preview" className="mt-4" />
+            :
+            <p>hi</p>
+        }
       </div>
     </div>
   );

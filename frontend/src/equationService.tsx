@@ -6,7 +6,7 @@ export const fetchEquationData = async ( text: string, user_id: string, instance
         params: {
             text,
             user_id,
-            instance_id,
+            instance_id
         }
     });
     console.log('response from latex api', response.data);
