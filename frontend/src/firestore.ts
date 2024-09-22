@@ -78,7 +78,6 @@ export const editEquation = async (userId: string, equationId: string, functionT
     try {
         const favouritesDocRef = doc(db, `users/${userId}/favourites`, equationId);
         await updateDoc(favouritesDocRef, { functionType: functionType });
-    
         console.log("Equation updated successfully");
     } catch (error) {
         console.error("Error updating equation:", error);

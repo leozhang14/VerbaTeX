@@ -52,7 +52,7 @@ const FavouritesPage = () => {
 
   return (
     <div>
-      <Navbar title="Favourite commands" location="favourites" />
+      <Navbar title="Favourites" location="favourites" />
       <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="w-1/2 flex flex-col items">
           {favourites.map((fav, index) => (

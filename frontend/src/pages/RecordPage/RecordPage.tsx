@@ -110,7 +110,7 @@ const RecordPage = () => {
 
   return (
     <div>
-      <Navbar title="Record new commands" location="record" />
+      <Navbar title="Record new expressions" location="record" />
       <div className="container mx-auto p-5 flex flex-col items-center">
         <div className="flex items-center space-x-3 cursor-pointer">
           <div

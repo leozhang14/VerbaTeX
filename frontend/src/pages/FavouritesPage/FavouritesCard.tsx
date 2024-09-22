@@ -137,6 +137,7 @@ const FavouritesCard = ({
           )}
         </div>
         <div className="flex items-center space-x-4 text-xl">
+          {/*
           {isEditting ? (
             <FaCheck
               className="cursor-pointer text-xl hover:text-green-700 hover:text-2xl transform transition-transform duration-200 hover:scale-125"
@@ -148,6 +149,7 @@ const FavouritesCard = ({
               onClick={() => setIsEditting(true)}
             ></MdEdit>
           )}
+          */}
           <FaTrash
             className="cursor-pointer text-2xl transform transition-transform duration-200 hover:scale-125"
             onClick={handleDelete}
