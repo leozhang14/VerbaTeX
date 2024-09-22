@@ -10,14 +10,14 @@ type RecentsCardsProps = {
   text: string;
   liked: boolean;
   index: number;
-  latex?: string;
+  latex: string;
   img?: string;
 };
 
 const RecentsCard = ({ text, liked, index, latex, img }: RecentsCardsProps) => {
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(latex);
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,

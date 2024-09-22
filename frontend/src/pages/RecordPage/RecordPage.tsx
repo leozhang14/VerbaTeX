@@ -90,8 +90,6 @@ const RecordPage = () => {
           result.latex_code,
           result.img_base64
         );
-
-        setText("");
       } else {
         toast.error("User not authenticated", {
           autoClose: 2000,

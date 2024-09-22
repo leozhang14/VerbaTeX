@@ -51,7 +51,7 @@ const FavouritesCard = ({
   const user = auth.currentUser;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(favourite);
+    navigator.clipboard.writeText(latex);
     toast.success("Copied to clipboard", {
       autoClose: 1000,
       hideProgressBar: true,
