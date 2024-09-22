@@ -43,7 +43,6 @@ export const fetchEquations = async (userId: string, liked: boolean) => {
   const equations = querySnapshot.docs.map(doc => {
     const data = doc.data();
     console.log("Document data:", data);
-
     return {
       id: doc.id,
       functionType: data.functionType || "Unknown",
