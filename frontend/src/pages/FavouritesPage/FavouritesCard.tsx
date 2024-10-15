@@ -171,10 +171,12 @@ const FavouritesCard = ({
             <div className="w-8"></div>
             <div>{latex ? latex : favourite }</div>
           </div>
-          <IoCopySharp
-            className="cursor-pointer text-xl transform transition-transform duration-200 hover:scale-125"
-            onClick={handleCopy}
-          />
+          <div className="flex items-center">
+            <IoCopySharp
+              className="cursor-pointer w-6 h-6 transform transition-transform duration-200 hover:scale-125"
+              onClick={handleCopy}
+            />
+          </div>
         </div>
       </div>
 
